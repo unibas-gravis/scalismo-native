@@ -25,6 +25,7 @@ public class JhdfLibraryBundle extends NativeLibraryBundle {
 		list.add(PLATFORM_LINUX32);
 		list.add(PLATFORM_WIN64);
 		list.add(PLATFORM_WIN32);
+		list.add(PLATFORM_MAC64);
 		return;
 	}
 

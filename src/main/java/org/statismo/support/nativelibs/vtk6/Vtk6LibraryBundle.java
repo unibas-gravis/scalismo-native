@@ -27,6 +27,7 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 		list.add(PLATFORM_LINUX32);
 		list.add(PLATFORM_WIN64);
 		list.add(PLATFORM_WIN32);
+		list.add(PLATFORM_MAC64);
 		return;
 	}
 
@@ -51,6 +52,7 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 		
 		boolean linux = platform.equals(PLATFORM_LINUX64) || platform.equals(PLATFORM_LINUX32);
 		boolean windows = platform.equals(PLATFORM_WIN64) || platform.equals(PLATFORM_WIN32);
+		boolean mac = platform.equals(PLATFORM_MAC64);
 
 		if (windows) {
 			list.add("msvcr100");
@@ -69,7 +71,7 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 		list.add("vtkjsoncpp-6.0");
 		list.add("vtklibxml2-6.0");
 		list.add("vtkproj4-6.0");
-		if (linux) {
+		if (linux || mac) {
 			list.add("vtksqlite-6.0");
 		}
 		list.add("vtkverdict-6.0");

@@ -19,6 +19,7 @@ public abstract class NativeLibraryBundle {
 	public static final String PLATFORM_WIN64 = "windows_amd64";
 	public static final String PLATFORM_LINUX32 = "linux_i386";
 	public static final String PLATFORM_LINUX64 = "linux_amd64";
+	public static final String PLATFORM_MAC64 = "mac_x86_64";
 	
 	private final List<String> _platforms;
 	private final List<NativeLibraryInfo> _libraries;
@@ -189,8 +190,8 @@ public abstract class NativeLibraryBundle {
 		for (NativeLibraryInfo info : _libraries) {
 			try {
 				if (onLibraryExtracted(info)) {
-					Runtime.getRuntime().load(
-							info.getTargetFile().getAbsolutePath());
+					String path = info.getTargetFile().getAbsolutePath();
+					Runtime.getRuntime().load(path);
 				}
 			} catch (NativeLibraryException t) {
 				throw t;
