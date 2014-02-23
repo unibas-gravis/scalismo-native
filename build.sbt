@@ -8,7 +8,7 @@ organization := "org.statismo"
 
 name := "nativelibs"
 
-version := "0.2.0-SNAPSHOT"
+version := "1.0.0"
 
 scalaVersion := "2.10.3"
 
@@ -20,8 +20,8 @@ publishTo := Some(Resolver.file("file",  new File( "/export/contrib/statismo/rep
 
 TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map {
 	(lib) => """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
-		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/0.2.0-SNAPSHOT/nativelibs_2.10-0.2.0-SNAPSHOT.jar",
-		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/0.2.0-SNAPSHOT/nativelibs_2.10-0.2.0-SNAPSHOT-sources.jar",
+		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/1.0.0/nativelibs_2.10-1.0.0.jar",
+		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/1.0.0/nativelibs_2.10-1.0.0-sources.jar",
 		lib
 	) ! 
 }
