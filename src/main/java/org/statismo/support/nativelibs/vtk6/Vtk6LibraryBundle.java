@@ -280,14 +280,31 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 					"Unexpected error: unable to initialize internal VTK state",
 					t);
 		}
+		new vtkPanel(); // should work without throwing exceptions.
+		checkSanity(); // emits a warning if environment seems to be unsupported
+	}
 
-		new vtkPanel();
+	private void checkSanity() {
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.startsWith("mac")) {
+			String version = System.getProperty("java.version");
+			if (!version.startsWith("1.6")) {
+				System.err.println("WARNING!!!");
+				System.err.println("You seem to be running this program on MacOS, with a Java version > 1.6.");
+				System.err.println("This constellation is known to not work correctly. In other words:");
+				System.err.println("The program will most probably crash.");
+				System.err.println();
+				System.err.println("The easiest way to work around this problem is to run the program");
+				System.err.println("with the Java 1.6 executable, i.e., using the following binary:");
+				System.err.println("/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Commands/java");
+				System.err.println();
+			}
+		}
 	}
 
 	@Override
 	public Runnable getVerifierRunnable() {
 		return new Runnable() {
-			
 			@Override
 			public void run() {
 				new vtkPanel();
