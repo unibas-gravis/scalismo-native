@@ -2,18 +2,12 @@ package org.statismo.support.nativelibs.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
-/**
- * @author langguth
- * 
- */
 public abstract class NativeLibraryBundle {
 	
 	public static final String PLATFORM_UNKNOWN = "UNKNOWN";

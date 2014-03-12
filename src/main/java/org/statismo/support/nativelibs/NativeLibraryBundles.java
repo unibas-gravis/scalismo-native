@@ -55,7 +55,6 @@ public class NativeLibraryBundles {
 		Map<String, NativeLibraryBundle> map = new LinkedHashMap<String, NativeLibraryBundle>();
 
 		addBundle(map, new JhdfLibraryBundle());
-//		addBundle(map, new Vtk5LibraryBundle());
 		addBundle(map, new Vtk6LibraryBundle());
 
 		return map;
@@ -93,6 +92,14 @@ public class NativeLibraryBundles {
 		}
 
 		String platform = NativeLibraryBundle.getPlatform();
+		
+		/* On Linux, we sometimes have the dreaded "[xcb] Most likely this is a multi-threaded client and XInitThreads has not been called" crash,
+		 * which occurs during shutdown. It's essentially harmless, but will clutter the /tmp directory over time. So if on Linux, we try to clean
+		 * up immediately.
+		 */
+		boolean linux = platform.equals(NativeLibraryBundle.PLATFORM_LINUX64) || platform.equals(NativeLibraryBundle.PLATFORM_LINUX32);
+
+
 		int loaded = 0;
 
 		for (String id : bundles) {
@@ -117,25 +124,28 @@ public class NativeLibraryBundles {
 				}
 			}
 			try {
+				boolean verbose = mode == InitializationMode.VERBOSE;
 				setupBaseDirectoryIfNeeded();
-				if (mode == InitializationMode.VERBOSE) {
+				if (verbose) {
 					System.out.println(bundle+ ": initializing");
 				}
 				if (bundle.initialize(baseDirectory, platform)) {
 					++loaded;
-					if (mode == InitializationMode.VERBOSE) {
+					if (verbose) {
 						System.out.println(bundle + ": initialized.");
-						Runnable verify = bundle.getVerifierRunnable();
-						if (verify != null) {
-							try {
-								verify.run();
+					}
+					Runnable verify = bundle.getVerifierRunnable();
+					if (verify != null && (verbose || linux)) {
+						try {
+							verify.run();
+							if (verbose) {
 								System.out.println(bundle + ": verified, seems to work.");
-							} catch (Throwable t) {
-								System.err.println(bundle + ": failed verification, it probably does not work.");
 							}
+						} catch (Throwable t) {
+							System.err.println(bundle + ": failed verification, it probably does not work.");
 						}
 					}
-				} else if (mode == InitializationMode.VERBOSE) {
+				} else if (verbose) {
 					System.out.println(bundle
 							+ " skipped, was already initialized");
 				}
@@ -143,7 +153,10 @@ public class NativeLibraryBundles {
 				throw ex;
 			}
 		}
-
+		
+		if (linux) {
+			CleanupFilesShutdownHook.getInstance().run();
+		}
 		return loaded;
 
 	}
@@ -151,7 +164,7 @@ public class NativeLibraryBundles {
 	private static synchronized void setupBaseDirectoryIfNeeded()
 			throws NativeLibraryException {
 		if (baseDirectory == null) {
-			baseDirectory = Util.createTemporaryDirectory("org_statismo_nativelib",
+			baseDirectory = Util.createTemporaryDirectory("org_statismo_nativelibs",
 					null);
 			CleanupFilesShutdownHook.getInstance().deleteOnExit(baseDirectory);
 		}
