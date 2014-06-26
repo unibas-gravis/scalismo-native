@@ -21,7 +21,7 @@ public class NativeLibraryBundles {
 	 * Controls behavior on initialization. Note that fatal errors (i.e., when
 	 * something goes wrong while initializing an (explicitly or implicitly)
 	 * requested bundle will always throw an exception.
-	 * 
+	 *
 	 */
 	public static enum InitializationMode {
 		/**
