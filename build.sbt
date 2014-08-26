@@ -8,20 +8,20 @@ organization := "org.statismo"
 
 name := "nativelibs"
 
-version := "1.0.1"
+version := "develop-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.2"
 
 EclipseKeys.withSource := true
 
-publishTo := Some(Resolver.file("file",  new File( "/export/contrib/statismo/repo" )) )
+publishTo := Some(Resolver.file("file",  new File( "/export/contrib/statismo/repo/public" )) )
 
 // it's too freaking complicated to figure out the path from the configuration, so here it is, duplicated:
 
 TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map {
 	(lib) => """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
-		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/1.0.1/nativelibs_2.10-1.0.1.jar",
-		"/export/contrib/statismo/repo/org/statismo/nativelibs_2.10/1.0.1/nativelibs_2.10-1.0.1-sources.jar",
+		"/export/contrib/statismo/repo/public/org/statismo/nativelibs_2.11/develop-SNAPSHOT/nativelibs_2.11-develop-SNAPSHOT.jar",
+		"/export/contrib/statismo/repo/public/org/statismo/nativelibs_2.11/develop-SNAPSHOT/nativelibs_2.11-develop-SNAPSHOT-sources.jar",
 		lib
 	) ! 
 }
@@ -34,13 +34,3 @@ TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map {
 	println
 	publishArtifact in (Compile, packageDoc) := false
 }
-
-//assemblyOption in packageDependency ~= { ao => ao.copy(includeScala = false) }
-
-//artifact in (Compile, packageDependency) ~= { art =>
-//  art.copy(`classifier` = Some("dependencies"), configurations = Array(new Configuration("compile")))
-//}
-
-//addArtifact(artifact in (Compile, packageDependency), packageDependency)
-
-
