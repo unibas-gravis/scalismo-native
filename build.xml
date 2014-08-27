@@ -5,7 +5,7 @@
 <project name="NativeLibsJarBundle" default="fixup">
 
 	<property name="product.name" value="nativelibs"/>
-	<property name="product.version" value="0.1.0-SNAPSHOT"/>
+	<property name="product.version" value="develop-SNAPSHOT"/>
 	<property name="product.vendor" value="statismo.org"/>
 	<property name="product.mainclass" value="org.statismo.support.nativelibs.NativeLibraryBundles"/>
 	<property name="tmpfile" value="tmp.jar" />
@@ -37,8 +37,6 @@
 				<include name="**/*.jar"/>
 			</zipgroupfileset>
 		</jar>
-
-		<sleep seconds="1"/>
 
 		<echo>Fixing up binary file...</echo>
 
