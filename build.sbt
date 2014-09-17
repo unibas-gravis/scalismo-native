@@ -4,33 +4,54 @@ import AssemblyKeys._
 // to https://github.com/sbt/sbt-assembly
 assemblySettings
 
-organization := "org.statismo"
+val productPackage = Seq("org","statismo")
+val productName = "nativelibs"
+val productVersion = "develop-SNAPSHOT"
 
-name := "nativelibs"
+val scalaMinorVersion = "2.10"
+val scalaReleaseVersion = "4"
 
-version := "develop-SNAPSHOT"
+val publishPrefix = "/export/contrib/statismo/repo/public"
+val publishLocalPrefix = s"${System.getProperty("user.home")}/.ivy2/local"
 
-scalaVersion := "2.11.2"
+
+organization := productPackage.mkString(".")
+
+name := productName
+
+version := productVersion
+
+scalaVersion := s"$scalaMinorVersion.$scalaReleaseVersion"
 
 EclipseKeys.withSource := true
 
-publishTo := Some(Resolver.file("file",  new File( "/export/contrib/statismo/repo/public" )) )
+publishTo := Some(Resolver.file("file",  new File( publishPrefix )) )
 
-// it's too freaking complicated to figure out the path from the configuration, so here it is, duplicated:
+TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map { lib =>
+  val topDir = s"$publishPrefix/${productPackage.mkString("/")}"
+  val dir = s"$topDir/${productName}_$scalaMinorVersion"
+  """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
+    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion.jar",
+    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion-sources.jar",
+    lib
+  ).!
+}
 
-TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map {
-	(lib) => """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
-		"/export/contrib/statismo/repo/public/org/statismo/nativelibs_2.11/develop-SNAPSHOT/nativelibs_2.11-develop-SNAPSHOT.jar",
-		"/export/contrib/statismo/repo/public/org/statismo/nativelibs_2.11/develop-SNAPSHOT/nativelibs_2.11-develop-SNAPSHOT-sources.jar",
-		lib
-	) ! 
+TaskKey[Unit]("publish-local-fixup") <<= (unmanagedBase in Compile) map {  lib =>
+  val dir = s"$publishLocalPrefix/${productPackage.mkString(".")}/${productName}_$scalaMinorVersion/$productVersion"
+    """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
+      s"$dir/jars/${productName}_$scalaMinorVersion.jar",
+      s"$dir/srcs/${productName}_$scalaMinorVersion-sources.jar",
+      lib
+    ).!
 }
 
 {
-	println
-	println("===================================================================")
-	println("To publish this project, first run \"publish\", then \"publish-fixup\"!")
-	println("===================================================================")
-	println
+	println()
+  println("===============================================================================")
+  println("To publish this project, run \"publish\", then \"publish-fixup\"!")
+  println("To publish-local this project, run \"publish-local\", then \"publish-local-fixup\"!")
+	println("===============================================================================")
+	println()
 	publishArtifact in (Compile, packageDoc) := false
 }
