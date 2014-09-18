@@ -93,7 +93,17 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
 
     @Override
     protected void onInitializeEnd() throws NativeLibraryException {
-        GLProfile.initSingleton();
+        try {
+            getVerifierRunnable().run();
+        } catch (Throwable t) {
+            System.err.println("\n\n");
+            System.err.println("It seems like there's an exception while loading the JOGL libraries.");
+            System.err.println("The reason might be that the program is running on a headless system.");
+            System.err.println("If that is the case, try enabling the \"java.awt.headless property\",");
+            System.err.println("e.g. java -Djava.awt.headless=true program.jar");
+            System.err.println("\n\n");
+            throw NativeLibraryException.wrap(t);
+        }
     }
 
     @Override
@@ -101,7 +111,9 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
 		return new Runnable() {
 			@Override
 			public void run() {
-                GLProfile.initSingleton();
+                if (!Boolean.getBoolean("java.awt.headless")) {
+                    GLProfile.initSingleton();
+                }
 			}
 		};
 	}

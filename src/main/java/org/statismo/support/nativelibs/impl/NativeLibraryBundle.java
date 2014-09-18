@@ -16,10 +16,34 @@ public abstract class NativeLibraryBundle {
 	public static final String PLATFORM_LINUX32 = "linux_i386";
 	public static final String PLATFORM_LINUX64 = "linux_amd64";
 	public static final String PLATFORM_MAC64 = "mac_x86_64";
+
+    /* caches initialization state. The field "exception" contains
+     * the exception that occurred during initialization, or <tt>null</tt>
+     * if the initialization was successful. If the initialization state
+     * is not known at all (=when no initialization was attempted), then
+     * the initializationResult <i>field</i> of the containing class
+     * will be <tt>null</tt>
+     */
+    public static class InitializationResult {
+        private NativeLibraryException exception;
+        public int refCount = 1;
+        public boolean isSuccess() {
+            return exception == null;
+        }
+        private InitializationResult() {
+            this(null);
+        }
+        private InitializationResult(Throwable throwable) {
+            exception = NativeLibraryException.wrap(throwable);
+        }
+        public NativeLibraryException getException() {
+            return exception;
+        }
+    }
 	
 	private final List<String> _platforms;
 	private final List<NativeLibraryInfo> _libraries;
-	private boolean _initialized = false;
+	private InitializationResult _initializationResult = null;
 
 	public abstract String getName();
 
@@ -132,38 +156,27 @@ public abstract class NativeLibraryBundle {
 		return getId() + " (" + getName() + " " + getVersion() + ")";
 	}
 
-	public final boolean initialize(File baseDir, String platform)
-			throws NativeLibraryException {
-		if (_initialized) {
-			return false;
+	public final synchronized InitializationResult initialize(File baseDir, String platform) {
+		if (_initializationResult != null) {
+            _initializationResult.refCount += 1;
+			return _initializationResult;
 		}
 
 		try {
 			onInitializeStart();
-		} catch (NativeLibraryException e) {
-			throw e;
-		} catch (Throwable t) {
-			throw new NativeLibraryException("Unexpected exception", t);
+            File target = Util.createTemporaryDirectory(getId(), baseDir);
+            NativeLibraryDirectory source = NativeLibraryDirectory.instantiate(
+                    this, platform);
+
+            determineUrls(source, platform);
+            createFiles(target);
+            loadLibraries();
+            onInitializeEnd();
+            _initializationResult = new InitializationResult();
+		} catch (Throwable error) {
+			_initializationResult = new InitializationResult(error);
 		}
-
-		File target = Util.createTemporaryDirectory(getId(), baseDir);
-		NativeLibraryDirectory source = NativeLibraryDirectory.instantiate(
-				this, platform);
-
-		determineUrls(source, platform);
-		createFiles(target);
-		loadLibraries();
-
-		try {
-			onInitializeEnd();
-		} catch (NativeLibraryException e) {
-			throw e;
-		} catch (Throwable t) {
-			throw new NativeLibraryException("Unexpected exception", t);
-		}
-
-		_initialized = true;
-		return true;
+        return _initializationResult;
 	}
 
 	private void determineUrls(NativeLibraryDirectory dir, String platform)

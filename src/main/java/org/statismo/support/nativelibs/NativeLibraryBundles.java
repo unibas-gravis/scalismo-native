@@ -15,31 +15,41 @@ import java.util.*;
 public class NativeLibraryBundles {
 
     /**
-     * Controls behavior on initialization. Note that fatal errors (i.e., when
-     * something goes wrong while initializing an (explicitly or implicitly)
-     * requested bundle will always throw an exception.
+     * Controls behavior on initialization. Stick to TERMINATE_ON_FAIL unless you have good
+     * reasons to do otherwise.
      */
     public static enum InitializationMode {
         /**
-         * Silently ignore bundles which are not available on the target
-         * platform.
+         * If a bundle is not available on the target platform, print a stack trace
+         * and terminate the program. This is the most strict, and recommended, argument.
          */
-        SILENT,
+        TERMINATE_ON_FAIL,
         /**
-         * Print a warning to System.err if a bundle is not available on the
-         * target platform.
+         * Like TERMINATE_ON_FAIL, but in addition print the loaded bundles to
+         * System.out. NOT RECOMMENDED for production.
          */
-        WARNONFAIL,
+        TERMINATE_VERBOSE,
         /**
          * Throw an exception if a bundle is not available on the target
-         * platform.
+         * platform, or fails to initialize. This is less strict than TERMINATE_ON_FAIL,
+         * and is recommended if you implement your own error handling.
          */
-        ABORTONFAIL,
+        THROW_EXCEPTION_ON_FAIL,
         /**
-         * Like WARNONFAIL, but in addition print the loaded bundles to
-         * System.out.
+         * Print a warning to System.err if a bundle is not available on the
+         * target platform, or fails to initialize properly. NOT RECOMMENDED.
          */
-        VERBOSE,
+        WARN_ON_FAIL,
+        /**
+         * Like WARN_ON_FAIL, but in addition print the loaded bundles to
+         * System.out. NOT RECOMMENDED for production.
+         */
+        WARN_VERBOSE,
+        /**
+         * Silently ignore bundles which are not available on the target
+         * platform, or which fail to load properly. NOT RECOMMENDED, EVER.
+         */
+        SILENT,
     }
 
     private static final String _UNKNOWN_PLATFORM = "UNKNOWN";
@@ -109,43 +119,67 @@ public class NativeLibraryBundles {
                 String msg = "Bundle " + bundle + " does not support platform "
                         + platform;
                 switch (mode) {
-                    case WARNONFAIL:
-                    case VERBOSE:
-                        System.err.println("WARNING: " + msg);
                     case SILENT:
                         continue;
-                    case ABORTONFAIL:
+                    case WARN_ON_FAIL:
+                    case WARN_VERBOSE:
+                        System.err.println("WARNING: " + msg);
+                        break;
+                    case THROW_EXCEPTION_ON_FAIL:
                         throw new NativeLibraryException(msg);
+                    case TERMINATE_ON_FAIL:
+                        System.err.println(msg);
+                        System.exit(1);
                 }
             }
             try {
-                boolean verbose = mode == InitializationMode.VERBOSE;
+                boolean verbose = (mode == InitializationMode.TERMINATE_VERBOSE || mode == InitializationMode.WARN_VERBOSE);
                 setupBaseDirectoryIfNeeded();
                 if (verbose) {
                     System.out.println(bundle + ": initializing");
                 }
-                if (bundle.initialize(baseDirectory, platform)) {
-                    ++loaded;
-                    if (verbose) {
-                        System.out.println(bundle + ": initialized.");
-                    }
-                    Runnable verify = bundle.getVerifierRunnable();
-                    if (verify != null && (verbose || linux)) {
-                        try {
-                            verify.run();
-                            if (verbose) {
-                                System.out.println(bundle + ": verified, seems to work.");
-                            }
-                        } catch (Throwable t) {
-                            System.err.println(bundle + ": failed verification, it probably does not work.");
+
+                NativeLibraryBundle.InitializationResult r = bundle.initialize(baseDirectory, platform);
+                if (r.isSuccess()) {
+                    if (r.refCount == 1) {
+                        ++loaded;
+                        if (verbose) {
+                            System.out.println(bundle + ": initialized.");
                         }
+                        Runnable verify = bundle.getVerifierRunnable();
+                        if (verify != null && (verbose || linux)) {
+                            try {
+                                verify.run();
+                                if (verbose) {
+                                    System.out.println(bundle + ": verified, seems to work.");
+                                }
+                            } catch (Throwable t) {
+                                throw new IllegalStateException(bundle + ": failed verification, it probably does not work.", t);
+                            }
+                        }
+                    } else if (verbose) {
+                        System.out.println(bundle
+                                + " skipped, was already initialized");
                     }
-                } else if (verbose) {
-                    System.out.println(bundle
-                            + " skipped, was already initialized");
+                } else {
+                    throw r.getException();
                 }
-            } catch (NativeLibraryException ex) {
-                throw ex;
+            } catch (Throwable t) {
+                NativeLibraryException ex = NativeLibraryException.wrap(t);
+                switch (mode) {
+                    case TERMINATE_ON_FAIL:
+                    case TERMINATE_VERBOSE:
+                        ex.printStackTrace();
+                        System.exit(1);
+                    case THROW_EXCEPTION_ON_FAIL:
+                        throw ex;
+                    case WARN_ON_FAIL:
+                    case WARN_VERBOSE:
+                        ex.printStackTrace();
+                        break;
+                    case SILENT:
+                        /* do nothing */
+                }
             }
         }
 
@@ -166,6 +200,7 @@ public class NativeLibraryBundles {
     }
 
     public static void main(String[] args) {
+        System.out.println("Java version: " + System.getProperty("java.version"));
         String platform = NativeLibraryBundle.getPlatform();
         System.out.println("Current platform: " + platform);
         if (_UNKNOWN_PLATFORM.equals(platform)) {
@@ -175,9 +210,9 @@ public class NativeLibraryBundles {
         printUsage();
 
         try {
-            int ok = initialize(InitializationMode.VERBOSE, args);
+            int ok = initialize(InitializationMode.WARN_VERBOSE, args);
             String plural = ok == 1 ? "bundle" : "bundles";
-            System.out.println("Initialization OK, " + ok + " " + plural
+            System.out.println("Initialization done, " + ok + " " + plural
                     + " initialized.");
         } catch (Throwable t) {
             System.err.println("Initialization failed with " + t.getClass().getSimpleName() + ", stacktrace follows.");
@@ -189,7 +224,7 @@ public class NativeLibraryBundles {
 
     private static void printUsage() {
         System.out
-                .println("==========================================================================");
+                .println("================================================================================");
         System.out.println("The following library bundles are available (bundles marked with an");
         System.out.println("asterisk (*) are loaded by default unless specific bundles are requested):");
         // System.out.println("[ ID (Name Version): platforms ]");
@@ -217,7 +252,7 @@ public class NativeLibraryBundles {
         // ExternalLibrariesJar.class.getSimpleName()+".initialize(\"b1\",\"b2\");");
         // System.out.println("If no arguments are given, ALL available bundles will be initialized.");
         System.out
-                .println("==========================================================================");
+                .println("================================================================================");
         System.out.println();
     }
 

@@ -7,16 +7,23 @@ public class NativeLibraryException extends Exception {
 		super(msg);
 	}
 
-	public NativeLibraryException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
+    public NativeLibraryException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
-	public static class UnsupportedPlatformException extends NativeLibraryException {
-		private static final long serialVersionUID = 1L;
-		
-		public UnsupportedPlatformException(String msg) {
-			super(msg);
-		}
+    public NativeLibraryException(Throwable cause) {
+        super(cause);
+    }
 
-	}
+    public static NativeLibraryException wrap (Throwable throwable) {
+        if (throwable == null) {
+            return null;
+        }
+        else if (throwable instanceof NativeLibraryException) {
+            return  (NativeLibraryException) throwable;
+        } else {
+            return new NativeLibraryException(throwable);
+        }
+
+    }
 }
