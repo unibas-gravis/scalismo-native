@@ -53,7 +53,8 @@
 			</zipfileset>
 			<!-- library jars, classes only -->
 			<zipfileset src="${libsfile}">
-				<include name="**/*.class"/>
+                <include name="**/*.*"/>
+                <exclude name="**/*.java"/>
 			</zipfileset>
 		</jar>
 		<copy file="${tmpfile}" tofile="${jarfile}" failonerror="true" overwrite="true" />

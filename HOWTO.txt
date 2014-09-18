@@ -1,0 +1,23 @@
+VTK (6.1.0)
+
+- GENERAL:
+  - set build type to "MinSizeRel"
+  - enable VTK_WRAP_JAVA and VTK_JAVA_JOGL_COMPONENT
+  - the JOGL stuff required for building is:
+     JOGL_GLUE: .../gluegen-rt-2.0.2.jar
+     JOGL_LIB:  .../jogl-all-2.0.2.jar
+
+- Linux:
+  - use Ubuntu 10.04 for "best" downward compatibility
+  - download latest cmake, and add it to $PATH.
+    - on 64-bit machines, make sure to install the i386 compatibility stuff,
+      the easiest way is to "sudo apt-get install wine"
+  - sudo apt-get install build-essential openjdk-6-jdk libgl1-mesa-dev
+
+- MacOS:
+  - Compile on MacOS 10.7 (Lion)
+  - run MacOS-reDLL.pl after compiling.
+
+- Windows:
+  - Compile with Visual C++ 2010
+  - use Windows XP for 32-bit, Windows 7 for 64-bit.

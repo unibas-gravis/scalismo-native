@@ -6,7 +6,7 @@ public class NativeLibraryDirectory extends org.statismo.support.nativelibs.impl
 
 	@Override
 	protected String mapToResourceName(String baseName) {
-		if (baseName.endsWith("-6.0")) {
+		if (baseName.endsWith("-6.1")) {
 			baseName = baseName+".1";
 		}
 		String name = System.mapLibraryName(baseName);

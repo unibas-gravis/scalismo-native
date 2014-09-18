@@ -44,27 +44,39 @@ public abstract class NativeLibraryBundle {
 
 	}
 
-	/**
-	 * This callback method is called once for every library, right after it was
-	 * extracted to a file, but before it is (possibly) loaded as a library.
-	 * Whether an attempt to directly load it as a native library is determined
-	 * by the return value of this method (the default is <tt>true</tt> unless
-	 * overridden by subclasses).
-	 * 
-	 * @param info
-	 *            a fully initialized {@link NativeLibraryInfo} instance containing all relevant information
-	 *            about the library which has just been extracted.
-	 * @return <tt>true</tt> if the library is to be loaded (using
-	 *         {@link Runtime#load(String)}), <tt>false</tt> if the library
-	 *         bundle will take care of the appropriate actions itself.
-	 * @throws NativeLibraryException
-	 */
-	protected boolean onLibraryExtracted(NativeLibraryInfo info)
-			throws NativeLibraryException {
-		return true;
-	}
+    /**
+     * This callback method is called once for every library, right after it was
+     * extracted to a file, but before it is (possibly) loaded as a library.
+     * Whether an attempt to directly load it as a native library is determined
+     * by the return value of this method (the default is <tt>true</tt> unless
+     * overridden by subclasses).
+     *
+     * @param info
+     *            a fully initialized {@link NativeLibraryInfo} instance containing all relevant information
+     *            about the library which has just been extracted.
+     * @return <tt>true</tt> if the library is to be loaded (using
+     *         {@link Runtime#load(String)}), <tt>false</tt> if the library
+     *         bundle will take care of the appropriate actions itself.
+     * @throws NativeLibraryException
+     */
+    protected boolean onLibraryExtracted(NativeLibraryInfo info)
+            throws NativeLibraryException {
+        return true;
+    }
 
-	/**
+    /**
+     * This callback method is called once for every library, right after it was
+     * loaded as a library.
+     *
+     * @param info
+     *            a fully initialized {@link NativeLibraryInfo} instance containing all relevant information
+     *            about the library which has just been extracted.
+     */
+    protected void onLibraryLoaded(NativeLibraryInfo info) {
+
+    }
+
+    /**
 	 * This callback method is called once for every library bundle, after all
 	 * libraries have been extracted.
 	 * 
@@ -188,6 +200,7 @@ public abstract class NativeLibraryBundle {
 				if (onLibraryExtracted(info)) {
 					String path = info.getTargetFile().getAbsolutePath();
 					Runtime.getRuntime().load(path);
+                    onLibraryLoaded(info);
 				}
 			} catch (Throwable t) {
 				throw new NativeLibraryException(
