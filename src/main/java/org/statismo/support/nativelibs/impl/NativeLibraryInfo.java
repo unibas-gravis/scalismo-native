@@ -31,7 +31,7 @@ public class NativeLibraryInfo {
 	}
 
 	protected void setNativeName(String nativeName) {
-		if (this.nativeName != null) {
+		if (this.nativeName != null && !this.nativeName.equals(nativeName)) {
 			throw new IllegalStateException("This property can only be set once.");
 		}
 		this.nativeName = nativeName;
@@ -47,7 +47,7 @@ public class NativeLibraryInfo {
 	}
 
 	protected void setSourceUrl(URL sourceUrl) {
-		if (this.sourceUrl != null) {
+		if (this.sourceUrl != null && !this.sourceUrl.equals(sourceUrl)) {
 			throw new IllegalStateException("This property can only be set once.");
 		}
 		this.sourceUrl = sourceUrl;
@@ -62,7 +62,7 @@ public class NativeLibraryInfo {
 	}
 
 	protected void setTargetFile(File targetFile) {
-		if (this.targetFile != null) {
+		if (this.targetFile != null && !this.targetFile.equals(targetFile)) {
 			throw new IllegalStateException("This property can only be set once.");
 		}
 		this.targetFile = targetFile;

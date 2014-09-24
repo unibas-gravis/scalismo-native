@@ -11,12 +11,15 @@ import vtk.vtkNativeLibrary;
 import vtk.vtkPanel;
 
 import javax.media.opengl.GLProfile;
+import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.List;
 
 
 public class JoglLibraryBundle extends NativeLibraryBundle {
+
+    private static class WrongThreadException extends RuntimeException {}
 
 	public String getName() {
 		return "JOGL";
@@ -93,7 +96,19 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
 
     @Override
     protected void onInitializeEnd() throws NativeLibraryException {
-        GLProfile.initSingleton();
+        try {
+            getVerifierRunnable().run();
+        } catch (WrongThreadException w) {
+            throw NativeLibraryException.wrap(w);
+        } catch (Throwable t) {
+            System.err.println("\n\n");
+            System.err.println("It seems like there's an exception while loading the JOGL libraries.");
+            System.err.println("The reason might be that the program is running on a headless system.");
+            System.err.println("If that is the case, try enabling the \"java.awt.headless property\",");
+            System.err.println("e.g. java -Djava.awt.headless=true -jar program.jar");
+            System.err.println("\n\n");
+            throw NativeLibraryException.wrap(t);
+        }
     }
 
     @Override
@@ -101,7 +116,19 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
 		return new Runnable() {
 			@Override
 			public void run() {
-                GLProfile.initSingleton();
+                if (!Boolean.getBoolean("java.awt.headless")) {
+                    if (SwingUtilities.isEventDispatchThread()) {
+                        System.err.println("\n\n");
+                        System.err.println("The JOGL libraries must be initialized outside of the Swing EDT.");
+                        System.err.println("Try placing the call to NativeLibraryBundles.initialize()");
+                        System.err.println("or org.statismo.stk.core.initialize()");
+                        System.err.println("directly in your main() method, before anything else.");
+                        System.err.println("\n\n");
+                        throw new WrongThreadException();
+                    } else {
+                        GLProfile.initSingleton();
+                    }
+                }
 			}
 		};
 	}
