@@ -10,13 +10,6 @@ import java.util.List;
 
 public abstract class NativeLibraryBundle {
 	
-	public static final String PLATFORM_UNKNOWN = "UNKNOWN";
-	public static final String PLATFORM_WIN32 = "windows_x86";
-	public static final String PLATFORM_WIN64 = "windows_amd64";
-	public static final String PLATFORM_LINUX32 = "linux_i386";
-	public static final String PLATFORM_LINUX64 = "linux_amd64";
-	public static final String PLATFORM_MAC64 = "mac_x86_64";
-
     /* caches initialization state. The field "exception" contains
      * the exception that occurred during initialization, or <tt>null</tt>
      * if the initialization was successful. If the initialization state
@@ -25,7 +18,7 @@ public abstract class NativeLibraryBundle {
      * will be <tt>null</tt>
      */
     public static class InitializationResult {
-        private NativeLibraryException exception;
+        private final NativeLibraryException exception;
         public int refCount = 1;
         public boolean isSuccess() {
             return exception == null;
@@ -49,7 +42,7 @@ public abstract class NativeLibraryBundle {
 
 	public abstract String getVersion();
 
-	protected abstract void getLibraryNamesInto(List<String> list, String platform);
+	protected abstract void getLibraryNamesInto(List<String> list);
 
 	protected abstract void getSupportedPlatformsInto(List<String> list);
 
@@ -135,7 +128,7 @@ public abstract class NativeLibraryBundle {
 		_platforms = Collections.unmodifiableList(list);
 
 		list = new LinkedList<String>();
-		getLibraryNamesInto(list, getPlatform());
+		getLibraryNamesInto(list);
 		_libraries = Collections.unmodifiableList(instantiateInfoObjects(list));
 	}
 
@@ -156,7 +149,7 @@ public abstract class NativeLibraryBundle {
 		return getId() + " (" + getName() + " " + getVersion() + ")";
 	}
 
-	public final synchronized InitializationResult initialize(File baseDir, String platform) {
+	public final synchronized InitializationResult initialize(File baseDir) {
 		if (_initializationResult != null) {
             _initializationResult.refCount += 1;
 			return _initializationResult;
@@ -166,9 +159,9 @@ public abstract class NativeLibraryBundle {
 			onInitializeStart();
             File target = Util.createTemporaryDirectory(getId(), baseDir);
             NativeLibraryDirectory source = NativeLibraryDirectory.instantiate(
-                    this, platform);
+                    this, Platform.getPlatform());
 
-            determineUrls(source, platform);
+            determineUrls(source);
             createFiles(target);
             loadLibraries();
             onInitializeEnd();
@@ -179,14 +172,14 @@ public abstract class NativeLibraryBundle {
         return _initializationResult;
 	}
 
-	private void determineUrls(NativeLibraryDirectory dir, String platform)
+	private void determineUrls(NativeLibraryDirectory dir)
 			throws NativeLibraryException {
 		for (NativeLibraryInfo info : _libraries) {
 			info.setNativeName(dir.mapToResourceName(info.getBaseName()));
 			URL url = dir.getResource(info.getNativeName());
 			if (url == null) {
 				throw new NativeLibraryException("Unable to load resource "
-						+ info.getNativeName() + " for platform " + platform);
+						+ info.getNativeName() + " for platform " + Platform.getPlatform());
 			}
 			info.setSourceUrl(url);
 		}
@@ -222,26 +215,5 @@ public abstract class NativeLibraryBundle {
 			}
 		}
 	}
-
-	public static String getPlatform() {
-		try {
-			
-//			Properties p = System.getProperties();
-//			for (Map.Entry<Object, Object> entry: p.entrySet()) {
-//				System.err.println(entry.getKey()+" "+entry.getValue());
-//			}
-			
-			String os = System.getProperty("os.name").trim().toLowerCase();
-			int space = os.indexOf(" ");
-			if (space > 0) {
-				os = os.substring(0, space);
-			}
-			String arch = System.getProperty("os.arch").trim().toLowerCase();
-			return os + "_" + arch;
-		} catch (Throwable t) {
-			return PLATFORM_UNKNOWN;
-		}
-	}
-
 
 }

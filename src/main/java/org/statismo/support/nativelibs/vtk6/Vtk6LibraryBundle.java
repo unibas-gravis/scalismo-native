@@ -2,6 +2,7 @@ package org.statismo.support.nativelibs.vtk6;
 
 import org.statismo.support.nativelibs.impl.NativeLibraryBundle;
 import org.statismo.support.nativelibs.impl.NativeLibraryException;
+import org.statismo.support.nativelibs.impl.Platform;
 import vtk.vtkNativeLibrary;
 import vtk.vtkPanel;
 
@@ -22,15 +23,15 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 
     @Override
     protected void getSupportedPlatformsInto(List<String> list) {
-        list.add(PLATFORM_LINUX64);
-        list.add(PLATFORM_LINUX32);
-        list.add(PLATFORM_WIN64);
-        list.add(PLATFORM_WIN32);
-        list.add(PLATFORM_MAC64);
+        list.add(Platform.PLATFORM_LINUX64);
+        list.add(Platform.PLATFORM_LINUX32);
+        list.add(Platform.PLATFORM_WIN64);
+        list.add(Platform.PLATFORM_WIN32);
+        list.add(Platform.PLATFORM_MAC64);
     }
 
     @Override
-    protected void getLibraryNamesInto(List<String> list, String platform) {
+    protected void getLibraryNamesInto(List<String> list) {
 
 		/*
          * NOTE: the order IS important. Later libs may depend on earlier ones
@@ -48,11 +49,7 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
 		 * list. Repeat until everything loads properly.
 		 */
 
-        boolean linux = platform.equals(PLATFORM_LINUX64) || platform.equals(PLATFORM_LINUX32);
-        boolean windows = platform.equals(PLATFORM_WIN64) || platform.equals(PLATFORM_WIN32);
-        boolean mac = platform.equals(PLATFORM_MAC64);
-
-        if (windows) {
+        if (Platform.isWindows()) {
             list.add("msvcr100");
             list.add("msvcp100");
         }
@@ -69,7 +66,7 @@ public class Vtk6LibraryBundle extends NativeLibraryBundle {
         list.add("vtkjsoncpp-6.1");
         list.add("vtklibxml2-6.1");
         list.add("vtkproj4-6.1");
-        if (linux || mac) {
+        if (Platform.isLinux() || Platform.isMac()) {
             list.add("vtksqlite-6.1");
         }
         list.add("vtkverdict-6.1");
