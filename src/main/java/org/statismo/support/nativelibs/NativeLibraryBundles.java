@@ -1,9 +1,6 @@
 package org.statismo.support.nativelibs;
 
-import org.statismo.support.nativelibs.impl.CleanupFilesShutdownHook;
-import org.statismo.support.nativelibs.impl.NativeLibraryBundle;
-import org.statismo.support.nativelibs.impl.NativeLibraryException;
-import org.statismo.support.nativelibs.impl.Util;
+import org.statismo.support.nativelibs.impl.*;
 import org.statismo.support.nativelibs.jhdf5.JhdfLibraryBundle;
 import org.statismo.support.nativelibs.jogl.JoglLibraryBundle;
 import org.statismo.support.nativelibs.vtk6.Vtk6LibraryBundle;
@@ -52,7 +49,6 @@ public class NativeLibraryBundles {
         SILENT,
     }
 
-    private static final String _UNKNOWN_PLATFORM = "UNKNOWN";
     private static final Map<String, NativeLibraryBundle> _BUNDLES = setupBundles();
 
     private static File baseDirectory = null;
@@ -96,16 +92,15 @@ public class NativeLibraryBundles {
             autoMode = true;
         }
 
-        String platform = NativeLibraryBundle.getPlatform();
-
 		/* On Linux, we sometimes have the dreaded "[xcb] Most likely this is a multi-threaded client and XInitThreads has not been called" crash,
 		 * which occurs during shutdown. It's essentially harmless, but will clutter the /tmp directory over time. So if on Linux, we try to clean
 		 * up immediately.
 		 */
-        boolean linux = platform.equals(NativeLibraryBundle.PLATFORM_LINUX64) || platform.equals(NativeLibraryBundle.PLATFORM_LINUX32);
+        boolean linux = Platform.isLinux();
 
 
         int loaded = 0;
+        String platform = Platform.getPlatform();
 
         for (String id : bundles) {
             NativeLibraryBundle bundle = _BUNDLES.get(id);
@@ -139,7 +134,7 @@ public class NativeLibraryBundles {
                     System.out.println(bundle + ": initializing");
                 }
 
-                NativeLibraryBundle.InitializationResult r = bundle.initialize(baseDirectory, platform);
+                NativeLibraryBundle.InitializationResult r = bundle.initialize(baseDirectory);
                 if (r.isSuccess()) {
                     if (r.refCount == 1) {
                         ++loaded;
@@ -201,9 +196,8 @@ public class NativeLibraryBundles {
 
     public static void main(String[] args) {
         System.out.println("Java version: " + System.getProperty("java.version"));
-        String platform = NativeLibraryBundle.getPlatform();
-        System.out.println("Current platform: " + platform);
-        if (_UNKNOWN_PLATFORM.equals(platform)) {
+        System.out.println("Current platform: " + Platform.getPlatform());
+        if (Platform.isUnknown()) {
             exitWithError("Cannot determine the platform you are running on.");
         }
 

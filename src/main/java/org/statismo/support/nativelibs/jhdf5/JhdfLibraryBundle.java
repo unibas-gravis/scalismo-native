@@ -7,6 +7,7 @@ import org.statismo.support.nativelibs.impl.NativeLibraryException;
 import org.statismo.support.nativelibs.impl.NativeLibraryInfo;
 
 import ncsa.hdf.object.FileFormat;
+import org.statismo.support.nativelibs.impl.Platform;
 
 
 public class JhdfLibraryBundle extends NativeLibraryBundle {
@@ -21,16 +22,14 @@ public class JhdfLibraryBundle extends NativeLibraryBundle {
 
 	@Override
 	protected void getSupportedPlatformsInto(List<String> list) {
-		list.add(PLATFORM_LINUX64);
-		list.add(PLATFORM_LINUX32);
-		list.add(PLATFORM_WIN64);
-		list.add(PLATFORM_WIN32);
-		list.add(PLATFORM_MAC64);
-		return;
+		list.add(Platform.PLATFORM_LINUX64);
+		list.add(Platform.PLATFORM_WIN64);
+		list.add(Platform.PLATFORM_WIN32);
+		list.add(Platform.PLATFORM_MAC64);
 	}
 
 	@Override
-	protected void getLibraryNamesInto(List<String> list, String platform) {
+	protected void getLibraryNamesInto(List<String> list) {
 
 		list.add("jhdf5");
 

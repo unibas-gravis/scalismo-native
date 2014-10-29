@@ -96,6 +96,9 @@
 			<arg value = "-c"/>
 			<arg value = "sha1sum ${srcfile} | cut -d ' ' -f 1 | xargs echo -n > ${srcfile}.sha1"/>
 		</exec>
+		<echo>SUCCESSFULLY UPDATED THE FOLLOWING TWO FILES:</echo>
+		<echo>${jarfile}</echo>
+		<echo>${srcfile}</echo>
 
 	</target>
 </project>

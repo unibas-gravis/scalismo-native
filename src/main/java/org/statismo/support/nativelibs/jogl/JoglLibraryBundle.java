@@ -1,49 +1,42 @@
 package org.statismo.support.nativelibs.jogl;
 
 import com.jogamp.common.jvm.JNILibLoaderBase;
-import com.jogamp.common.os.Platform;
-import com.jogamp.common.util.cache.TempJarCache;
-import jogamp.common.Debug;
 import org.statismo.support.nativelibs.impl.NativeLibraryBundle;
 import org.statismo.support.nativelibs.impl.NativeLibraryException;
 import org.statismo.support.nativelibs.impl.NativeLibraryInfo;
-import vtk.vtkNativeLibrary;
-import vtk.vtkPanel;
+import org.statismo.support.nativelibs.impl.Platform;
 
 import javax.media.opengl.GLProfile;
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field;
 import java.util.List;
-
 
 public class JoglLibraryBundle extends NativeLibraryBundle {
 
-    private static class WrongThreadException extends RuntimeException {}
+    private static class WrongThreadException extends RuntimeException {
+    }
 
-	public String getName() {
-		return "JOGL";
-	}
+    public String getName() {
+        return "JOGL";
+    }
 
-	public String getVersion() {
-		return "2.0.2";
-	}
+    public String getVersion() {
+        return "2.0.2";
+    }
 
-	@Override
-	protected void getSupportedPlatformsInto(List<String> list) {
-		list.add(PLATFORM_LINUX64);
-		list.add(PLATFORM_LINUX32);
-		list.add(PLATFORM_WIN64);
-		list.add(PLATFORM_WIN32);
-		list.add(PLATFORM_MAC64);
-		return;
-	}
+    @Override
+    protected void getSupportedPlatformsInto(List<String> list) {
+        list.add(Platform.PLATFORM_LINUX64);
+        list.add(Platform.PLATFORM_WIN64);
+        list.add(Platform.PLATFORM_WIN32);
+        list.add(Platform.PLATFORM_MAC64);
+    }
 
-	@Override
-	protected void getLibraryNamesInto(List<String> list, String platform) {
+    @Override
+    protected void getLibraryNamesInto(List<String> list) {
 
 		/*
-		 * NOTE: the order IS important. Later libs may depend on earlier ones
+         * NOTE: the order IS important. Later libs may depend on earlier ones
 		 * being loaded, and may fail if they haven't been loaded.
 		 * 
 		 * The easiest "algorithm" for getting the order right is manual, using
@@ -57,37 +50,34 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
 		 * ^- Which means that vtkproj4 must be moved before vtkGeovis in the
 		 * list. Repeat until everything loads properly.
 		 */
-		
-		boolean linux = platform.equals(PLATFORM_LINUX64) || platform.equals(PLATFORM_LINUX32);
-		boolean windows = platform.equals(PLATFORM_WIN64) || platform.equals(PLATFORM_WIN32);
-		boolean mac = platform.equals(PLATFORM_MAC64);
 
         list.add("gluegen-rt");
         list.add("nativewindow_awt");
-        if (linux) {
+        if (Platform.isLinux()) {
             list.add("nativewindow_x11");
-        } else if (mac) {
+        } else if (Platform.isMac()) {
             list.add("nativewindow_macosx");
-        } else if (windows) {
+        } else if (Platform.isWindows()) {
             list.add("nativewindow_win32");
         }
         list.add("jogl_desktop");
         list.add("jogl_mobile");
         list.add("newt");
-	}
+    }
 
-	@Override
-	protected void onInitializeStart() throws NativeLibraryException {
-		// // Loads mawt.so
-		Toolkit.getDefaultToolkit();
-		// // Loads jawt.so - this is explicitly required in JRE 7
-		try {
-			System.loadLibrary("jawt");
-		} catch (UnsatisfiedLinkError ignored) {}
+    @Override
+    protected void onInitializeStart() throws NativeLibraryException {
+        // // Loads mawt.so
+        Toolkit.getDefaultToolkit();
+        // // Loads jawt.so - this is explicitly required in JRE 7
+        try {
+            System.loadLibrary("jawt");
+        } catch (UnsatisfiedLinkError ignored) {
+        }
 
         // silence warning messages
         System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
-	}
+    }
 
     @Override
     protected void onLibraryLoaded(NativeLibraryInfo info) {
@@ -112,10 +102,10 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
     }
 
     @Override
-	public Runnable getVerifierRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
+    public Runnable getVerifierRunnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
                 if (!Boolean.getBoolean("java.awt.headless")) {
                     if (SwingUtilities.isEventDispatchThread()) {
                         System.err.println("\n\n");
@@ -129,14 +119,14 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
                         GLProfile.initSingleton();
                     }
                 }
-			}
-		};
-	}
+            }
+        };
+    }
 
-	@Override
-	public boolean isLoadByDefault() {
-		return true;
-	}
+    @Override
+    public boolean isLoadByDefault() {
+        return true;
+    }
 
 
 }

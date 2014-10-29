@@ -6,7 +6,7 @@ assemblySettings
 
 val productPackage = Seq("org","statismo")
 val productName = "nativelibs"
-val productVersion = "1.3.1"
+val productVersion = "1.4.0"
 
 val scalaMinorVersion = "2.10"
 val scalaReleaseVersion = "4"
@@ -22,6 +22,10 @@ name := productName
 version := productVersion
 
 scalaVersion := s"$scalaMinorVersion.$scalaReleaseVersion"
+
+javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+
+scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.6")
 
 EclipseKeys.withSource := true
 

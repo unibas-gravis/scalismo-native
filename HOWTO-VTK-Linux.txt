@@ -1,0 +1,42 @@
+### Compile VTK 6.1 on Scientific Linux 5
+
+yum upgrade
+
+#32-bit only:
+yum install kernel
+yum erase kernel-PAE
+
+#VirtualBox additions
+yum install make gcc kernel-devel
+
+# statismo
+edit /etc/group, add $user to vboxsf
+yum install gcc-c++ java-1.6.0-openjdk-devel mesa-libOSMesa-devel mesa-libGL-devel libXt-devel
+poweroff
+
+# set statismo to be auto-mounted as shared dir
+
+#pure vanity: set the vtk sources folder to /vtk (used in VTK error messages)
+#as root:
+mkdir /vtk
+cp -r /media/sf_statismo/vtk/VTK-6.1.0/* /vtk/
+chmod -R 755 /vtk/
+
+#as user:
+mkdir ~/vtk
+cd ~/vtk
+/media/sf_statismo/cmake/bin/ccmake /vtk
+
+# configure (MinSizeRel)
+# VTK_WRAP_JAVA: ON
+# VTK_JAVA_JOGL_COMPONENT: ON
+# once you get JOGL errors:
+# switch to advanced mode
+JOGL_GLUE=/media/sf_statismo/jogl/gluegen-rt-2.0.2.jar
+JOGL_LIB=/media/sf_statismo/jogl/jogl-all-2.0.2.jar
+# generate
+
+make -j5
+
+The actual .so files end up in the lib/ directory.
+
