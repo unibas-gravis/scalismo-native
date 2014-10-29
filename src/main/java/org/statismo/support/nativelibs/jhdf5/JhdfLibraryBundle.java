@@ -23,7 +23,6 @@ public class JhdfLibraryBundle extends NativeLibraryBundle {
 	@Override
 	protected void getSupportedPlatformsInto(List<String> list) {
 		list.add(Platform.PLATFORM_LINUX64);
-		list.add(Platform.PLATFORM_LINUX32);
 		list.add(Platform.PLATFORM_WIN64);
 		list.add(Platform.PLATFORM_WIN32);
 		list.add(Platform.PLATFORM_MAC64);
