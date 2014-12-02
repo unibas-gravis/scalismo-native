@@ -1,26 +1,52 @@
 package org.statismo.support.nativelibs.jogl.troubleshoot;
 
 
-import org.statismo.support.nativelibs.NativeLibraryBundles;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 import vtk.rendering.jogl.vtkJoglCanvasComponent;
 import vtk.rendering.jogl.vtkJoglPanelComponent;
 import vtk.rendering.vtkAbstractEventInterceptor;
 import vtk.*;
 
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLProfile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Map;
 
 public class JoglWithVtk {
 
-    public static void main(String[] args) throws Exception {
-        NativeLibraryBundles.initialize(NativeLibraryBundles.InitializationMode.WARN_VERBOSE);
+    private static final int FRAME_WIDTH = 300;
+    private static final int FRAME_HEIGHT = 300;
+    private static final int FRAME_PADDING = 50;
 
-        final boolean usePanel = args.length > 0;
+    public static void main(String[] args) {
+
+        boolean usePanel = args.length > 0;
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Map<String, GLProfile> profiles = GLProfiles.getAvailableProfiles(true);
+
+        int x = 0, y = 0;
+        for (Map.Entry<String, GLProfile> entry : profiles.entrySet()) {
+            showFrameForProfile(entry.getKey(), entry.getValue(), usePanel, x, y);
+            x += (FRAME_WIDTH + FRAME_PADDING);
+            if (x + FRAME_WIDTH > screenSize.width) {
+                x = 0;
+                y += FRAME_PADDING;
+                if (y + FRAME_HEIGHT <= screenSize.height) {
+                    y += FRAME_HEIGHT;
+                }
+            }
+        }
+
+    }
+
+    private static void showFrameForProfile(final String profileName, GLProfile profile, final boolean usePanel, final int x, final int y) {
+        final GLCapabilities capas = new GLCapabilities(profile);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -38,8 +64,9 @@ public class JoglWithVtk {
                 coneActor.SetMapper(coneMapper);
 
                 // VTK rendering part
-                final vtkAbstractJoglComponent<?> joglWidget = usePanel ? new vtkJoglPanelComponent() : new vtkJoglCanvasComponent();
-                System.out.println("We are using " + joglWidget.getComponent().getClass().getName() + " for the rendering.");
+                vtkGenericOpenGLRenderWindow window = new vtkGenericOpenGLRenderWindow();
+                final vtkAbstractJoglComponent<?> joglWidget = usePanel ? new vtkJoglPanelComponent(window, capas) : new vtkJoglCanvasComponent(window, capas);
+                //System.out.println("We are using " + joglWidget.getComponent().getClass().getName() + " for the rendering.");
 
                 joglWidget.getRenderer().AddActor(coneActor);
 
@@ -121,13 +148,13 @@ public class JoglWithVtk {
                 });
 
                 // UI part
-                JFrame frame = new JFrame("JOGL With VTK Test");
+                JFrame frame = new JFrame(profileName);
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 frame.getContentPane().setLayout(new BorderLayout());
                 frame.getContentPane().add(joglWidget.getComponent(),
                         BorderLayout.CENTER);
-                frame.setSize(640, 480);
-                frame.setLocationRelativeTo(null);
+                frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+                frame.setLocation(x, y);
                 frame.setVisible(true);
                 joglWidget.resetCamera();
                 joglWidget.getComponent().requestFocus();

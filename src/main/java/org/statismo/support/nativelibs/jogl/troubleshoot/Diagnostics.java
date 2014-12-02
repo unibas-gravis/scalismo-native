@@ -11,9 +11,10 @@ public class Diagnostics {
         NativeLibraryBundles.initialize(NativeLibraryBundles.InitializationMode.THROW_EXCEPTION_ON_FAIL);
 
         try {
-            System.out.println("Default OpenGL profile: " + GLProfile.getDefault().toString());
+            GLProfile profile = GLProfile.getDefault();
+            System.out.println("Default OpenGL profile: " + profile.toString());
         } catch (GLException ex) {
-            System.out.println("FAILED TO LOAD DEFAULT OpenGL profile: " + ex.getMessage());
+            System.out.println("FAILED TO LOAD DEFAULT OpenGL PROFILE: " + ex.getMessage());
         }
 
         System.out.println();
@@ -22,9 +23,9 @@ public class Diagnostics {
             try {
                 System.out.print("getting " + profileName + " - ");
                 GLProfile profile = GLProfile.get(profileName);
-                System.out.println("OK, got: " + profile.toString());
+                System.out.println("OK, got: " + profile.toString() + ", isGL2=" + profile.isGL2());
             } catch (GLException ex) {
-                System.out.println("FAILED: " + ex.getMessage());
+                System.out.println("FAILED");
             }
         }
     }
