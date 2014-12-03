@@ -21,7 +21,7 @@ public class JoglLibraryBundle extends NativeLibraryBundle {
     }
 
     public String getVersion() {
-        return "2.0.2";
+        return "2.2.4";
     }
 
     @Override
