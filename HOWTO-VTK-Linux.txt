@@ -3,15 +3,15 @@
 yum upgrade
 
 #32-bit only:
-yum install kernel
+yum -y install kernel
 yum erase kernel-PAE
 
 #VirtualBox additions
-yum install make gcc kernel-devel
+yum -y install make gcc kernel-devel
 
 # statismo
 edit /etc/group, add $user to vboxsf
-yum install gcc-c++ java-1.6.0-openjdk-devel mesa-libOSMesa-devel mesa-libGL-devel libXt-devel
+yum -y install gcc-c++ java-1.6.0-openjdk-devel mesa-libOSMesa-devel mesa-libGL-devel libXt-devel
 poweroff
 
 # set statismo to be auto-mounted as shared dir
