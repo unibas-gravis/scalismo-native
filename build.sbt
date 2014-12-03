@@ -6,7 +6,7 @@ assemblySettings
 
 val productPackage = Seq("org","statismo")
 val productName = "nativelibs"
-val productVersion = "develop-SNAPSHOT"
+val productVersion = "1.5.0"
 
 val scalaMinorVersion = "2.10"
 val scalaReleaseVersion = "4"
