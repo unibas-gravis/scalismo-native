@@ -8,6 +8,7 @@ import javax.media.opengl.GLProfile;
 public class Diagnostics {
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("jogl.verbose", "true");
         NativeLibraryBundles.initialize(NativeLibraryBundles.InitializationMode.THROW_EXCEPTION_ON_FAIL);
 
         try {
