@@ -4,8 +4,8 @@ import AssemblyKeys._
 // to https://github.com/sbt/sbt-assembly
 assemblySettings
 
-val productPackage = Seq("org","statismo")
-val productName = "nativelibs"
+val productPackage = Seq("ch","unibas","cs","gravis")
+val productName = "scalismo-native-all"
 val productVersion = "develop-SNAPSHOT"
 
 val scalaMinorVersion = "2.10"

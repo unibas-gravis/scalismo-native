@@ -4,10 +4,9 @@
 
 <project name="NativeLibsJarBundle" default="fixup">
 
-	<property name="product.name" value="nativelibs"/>
-	<property name="product.version" value="develop-SNAPSHOT"/>
-	<property name="product.vendor" value="statismo.org"/>
-	<property name="product.mainclass" value="org.statismo.support.nativelibs.NativeLibraryBundles"/>
+	<property name="product.name" value="scalismo-native"/>
+	<property name="product.vendor" value="ch.unibas.ch.gravis"/>
+	<property name="product.mainclass" value="scalismo.support.nativelibs.NativeLibraryBundles"/>
 	<property name="tmpfile" value="tmp.jar" />
 	<property name="libsfile" value="tmp-libs.jar" />
 
@@ -43,7 +42,6 @@
 		<jar destfile="${tmpfile}">
 			<manifest>
 				<attribute name="Implementation-Title" value="${product.name}"/>
-				<attribute name="Implementation-Version" value="${product.version}"/>
 				<attribute name="Implementation-Vendor" value="${product.vendor}"/>
 				<attribute name="Main-Class" value="${product.mainclass}"/>
 			</manifest>
