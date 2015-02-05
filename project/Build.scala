@@ -3,7 +3,7 @@ import sbt._
 
 object Build extends sbt.Build {
 
-  lazy val productVersion = "2.0.0"
+  lazy val productVersion = "develop-SNAPSHOT"
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")
 
   lazy val scalaMinorVersion = "2.10"
