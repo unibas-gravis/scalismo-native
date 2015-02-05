@@ -9,7 +9,7 @@ object Build extends sbt.Build {
   lazy val scalaMinorVersion = "2.10"
   lazy val scalaReleaseVersion = "4"
 
-  lazy val publishPrefix = "/tmp/export/contrib/statismo/repo/public"
+  lazy val publishPrefix = "/export/contrib/statismo/repo/public"
   lazy val publishLocalPrefix = s"${System.getProperty("user.home")}/.ivy2/local"
 
   // these task and settings keys are needed for the implementation project
