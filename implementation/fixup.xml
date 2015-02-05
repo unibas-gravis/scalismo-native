@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This file is intended to be invoked from the build.sbt file, not as a standalone build script! -->
+
+<project name="NativeLibsJarBundle" default="fixup">
+
+	<property name="product.name" value="scalismo-native"/>
+	<property name="product.vendor" value="ch.unibas.ch.gravis"/>
+	<property name="product.mainclass" value="scalismo.support.nativelibs.NativeLibraryBundlesImplementation"/>
+
+	<condition property="argumentsmissing">
+		<not>
+			<and>
+				<isset property="jarfile"/>
+				<isset property="srcfile"/>
+				<isset property="productname"/>
+				<isset property="fixupexcludes"/>
+			</and>
+		</not>
+	</condition>
+
+	<target name="checkarguments" if="argumentsmissing">
+		<echo>You must define the values jarfile, srcfile, libdir, productname, and fixupexcludes, like so:</echo>
+		<echo>ant -Djarfile=/path/to/file.jar -Dsrcfile=/path/to/file-sources.jar -Dproductname=something -Dfixupexcludes="**/windows_x86/**"</echo>
+		<fail/>
+	</target>
+
+	<property name="tmpfile" value="tmp-${productname}.jar" />
+
+	<target name="fixup" depends="checkarguments">
+
+		<delete file="${tmpfile}" />
+
+		<echo>Fixing up binary file (excluding: "${fixupexcludes}")...</echo>
+
+		<jar destfile="${tmpfile}">
+			<manifest>
+				<attribute name="Implementation-Title" value="${product.name}"/>
+				<attribute name="Implementation-Vendor" value="${product.vendor}"/>
+				<attribute name="Main-Class" value="${product.mainclass}"/>
+			</manifest>
+
+			<zipfileset src="${jarfile}" excludes="${fixupexcludes}">
+				<include name="**/*.*"/>
+			</zipfileset>
+		</jar>
+		<copy file="${tmpfile}" tofile="${jarfile}" failonerror="true" overwrite="true" />
+		<delete file="${tmpfile}" />
+
+		<echo>Fixing up sources file...</echo>
+		<jar destfile="${tmpfile}">
+			<zipfileset src="${srcfile}" excludes="${fixupexcludes}">
+				<include name="**/*.java"/>
+			</zipfileset>
+		</jar>
+		
+		<copy file="${tmpfile}" tofile="${srcfile}" failonerror="true" overwrite="true" />
+		<delete file="${tmpfile}" />
+
+		<echo>Adjusting MD5 and SHA-1 sums...</echo>
+		
+		<exec executable="/bin/sh">
+			<arg value = "-c"/>
+			<arg value = "md5sum ${jarfile} | cut -d ' ' -f 1 | xargs echo -n > ${jarfile}.md5"/>
+		</exec>
+
+		<exec executable="/bin/sh">
+			<arg value = "-c"/>
+			<arg value = "sha1sum ${jarfile} | cut -d ' ' -f 1 | xargs echo -n > ${jarfile}.sha1"/>
+		</exec>
+
+		<exec executable="/bin/sh">
+			<arg value = "-c"/>
+			<arg value = "md5sum ${srcfile} | cut -d ' ' -f 1 | xargs echo -n > ${srcfile}.md5"/>
+		</exec>
+
+		<exec executable="/bin/sh">
+			<arg value = "-c"/>
+			<arg value = "sha1sum ${srcfile} | cut -d ' ' -f 1 | xargs echo -n > ${srcfile}.sha1"/>
+		</exec>
+		<echo>${productname} -- successfully updated files:</echo>
+		<echo>${jarfile}</echo>
+		<echo>${srcfile}</echo>
+
+	</target>
+</project>
