@@ -2,7 +2,11 @@
 .classpath
 .settings
 /target/
+/stub/target/
+/implementation/target*/
 /bin/
+/implementation/project/
+/stub/project/
 /project/target/
 /project/project/
 *~
