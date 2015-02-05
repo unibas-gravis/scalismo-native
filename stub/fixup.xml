@@ -4,26 +4,28 @@
 
 <project name="NativeLibsJarBundle" default="fixup">
 
-	<property name="product.name" value="scalismo-native"/>
+	<property name="product.name" value="scalismo-native-stub"/>
 	<property name="product.vendor" value="ch.unibas.ch.gravis"/>
-	<property name="product.mainclass" value="scalismo.support.nativelibs.NativeLibraryBundles"/>
-	<property name="tmpfile" value="tmp.jar" />
-	<property name="libsfile" value="tmp-libs.jar" />
 
 	<condition property="argumentsmissing">
 		<not>
 			<and>
 				<isset property="jarfile"/>
+				<isset property="srcfile"/>
 				<isset property="libdir"/>
+				<isset property="productname"/>
 			</and>
 		</not>
 	</condition>
 
 	<target name="checkarguments" if="argumentsmissing">
-		<echo>You must define the values jarfile and libdir, like so:</echo>
-		<echo>ant -Djarfile=/path/to/file.jar -Dsrcfile=/path/to/file-sources.jar -Dlibdir=/some/dir/</echo>
+		<echo>You must define the values jarfile, srcfile, libdir, and productname, like so:</echo>
+		<echo>ant -Djarfile=/path/to/file.jar -Dsrcfile=/path/to/file-sources.jar -Dlibdir=/some/dir/ -Dproductname=something</echo>
 		<fail/>
 	</target>
+
+	<property name="tmpfile" value="tmp-${productname}.jar" />
+	<property name="libsfile" value="tmp-libs-${productname}.jar" />
 
 	<target name="fixup" depends="checkarguments">
 
@@ -43,7 +45,6 @@
 			<manifest>
 				<attribute name="Implementation-Title" value="${product.name}"/>
 				<attribute name="Implementation-Vendor" value="${product.vendor}"/>
-				<attribute name="Main-Class" value="${product.mainclass}"/>
 			</manifest>
 
 			<zipfileset src="${jarfile}">
@@ -94,7 +95,7 @@
 			<arg value = "-c"/>
 			<arg value = "sha1sum ${srcfile} | cut -d ' ' -f 1 | xargs echo -n > ${srcfile}.sha1"/>
 		</exec>
-		<echo>SUCCESSFULLY UPDATED THE FOLLOWING TWO FILES:</echo>
+		<echo>${productname} -- successfully updated files:</echo>
 		<echo>${jarfile}</echo>
 		<echo>${srcfile}</echo>
 

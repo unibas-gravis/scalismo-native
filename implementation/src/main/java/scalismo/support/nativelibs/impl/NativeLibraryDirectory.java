@@ -1,5 +1,7 @@
 package scalismo.support.nativelibs.impl;
 
+import scalismo.support.nativelibs.NativeLibraryException;
+
 import java.net.URL;
 
 public abstract class NativeLibraryDirectory {

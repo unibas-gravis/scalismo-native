@@ -1,5 +1,7 @@
 package scalismo.support.nativelibs.impl;
 
+import scalismo.support.nativelibs.NativeLibraryException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

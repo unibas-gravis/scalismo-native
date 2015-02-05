@@ -2,7 +2,7 @@ package scalismo.support.nativelibs.jogl;
 
 import com.jogamp.common.jvm.JNILibLoaderBase;
 import scalismo.support.nativelibs.impl.NativeLibraryBundle;
-import scalismo.support.nativelibs.impl.NativeLibraryException;
+import scalismo.support.nativelibs.NativeLibraryException;
 import scalismo.support.nativelibs.impl.NativeLibraryInfo;
 import scalismo.support.nativelibs.impl.Platform;
 

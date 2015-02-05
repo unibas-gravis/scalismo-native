@@ -1,61 +1,30 @@
-import AssemblyKeys._
+// this is the root build.sbt
 
-// this must appear as a standalone line before any other instructions related
-// to https://github.com/sbt/sbt-assembly
-assemblySettings
+// these settings apply to all subprojects
 
-val productPackage = Seq("ch","unibas","cs","gravis")
-val productName = "scalismo-native-all"
-val productVersion = "develop-SNAPSHOT"
+organization in ThisBuild := productPackage.mkString(".")
 
-val scalaMinorVersion = "2.10"
-val scalaReleaseVersion = "4"
+version in ThisBuild := productVersion
 
-val publishPrefix = "/export/contrib/statismo/repo/public"
-val publishLocalPrefix = s"${System.getProperty("user.home")}/.ivy2/local"
+scalaVersion in ThisBuild := s"$scalaMinorVersion.$scalaReleaseVersion"
+
+javacOptions in ThisBuild ++= Seq("-source", "1.6", "-target", "1.6")
+
+scalacOptions in ThisBuild ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.6")
+
+publishTo in ThisBuild := Some(Resolver.file("file",  new File( publishPrefix )) )
 
 
-organization := productPackage.mkString(".")
 
-name := productName
+// the root project itself does not publish anything, but depends on the publish[-local] tasks.
+// Well, except that for the implementation, it also needs to be "fixed up".
+// So first, set the task to do nothing, then add the dependency. The other dependencies are found transitively.
 
-version := productVersion
+publishLocal := {}
 
-scalaVersion := s"$scalaMinorVersion.$scalaReleaseVersion"
+publishLocal <<= publishLocal dependsOn (publishLocalFixup in impl_all, publishLocalFixup in impl_linux64, publishLocalFixup in impl_mac64, publishLocalFixup in impl_win64, publishLocalFixup in impl_win32, publishLocalFixup in impl_win)
 
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+publish := {}
 
-scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.6")
+publish <<= publish dependsOn (publishFixup in impl_all, publishFixup in impl_linux64, publishFixup in impl_mac64, publishFixup in impl_win64, publishFixup in impl_win32, publishFixup in impl_win)
 
-EclipseKeys.withSource := true
-
-publishTo := Some(Resolver.file("file",  new File( publishPrefix )) )
-
-TaskKey[Unit]("publish-fixup") <<= (unmanagedBase in Compile) map { lib =>
-  val topDir = s"$publishPrefix/${productPackage.mkString("/")}"
-  val dir = s"$topDir/${productName}_$scalaMinorVersion"
-  """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
-    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion.jar",
-    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion-sources.jar",
-    lib
-  ).!
-}
-
-TaskKey[Unit]("publish-local-fixup") <<= (unmanagedBase in Compile) map {  lib =>
-  val dir = s"$publishLocalPrefix/${productPackage.mkString(".")}/${productName}_$scalaMinorVersion/$productVersion"
-    """ant -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s""".format(
-      s"$dir/jars/${productName}_$scalaMinorVersion.jar",
-      s"$dir/srcs/${productName}_$scalaMinorVersion-sources.jar",
-      lib
-    ).!
-}
-
-{
-	println()
-  println("===============================================================================")
-  println("To publish this project, run \"publish\", then \"publish-fixup\"!")
-  println("To publish-local this project, run \"publish-local\", then \"publish-local-fixup\"!")
-	println("===============================================================================")
-	println()
-	publishArtifact in (Compile, packageDoc) := false
-}

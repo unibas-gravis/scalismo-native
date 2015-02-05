@@ -1,7 +1,9 @@
 package scalismo.support.nativelibs.jogl.troubleshoot;
 
+import scalismo.support.nativelibs.InitializationMode;
 import scalismo.support.nativelibs.NativeLibraryBundles;
-import scalismo.support.nativelibs.impl.NativeLibraryException;
+import scalismo.support.nativelibs.NativeLibraryBundlesImplementation;
+import scalismo.support.nativelibs.NativeLibraryException;
 
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
@@ -10,7 +12,7 @@ import java.util.*;
 public class GLProfiles {
     static {
         try {
-            NativeLibraryBundles.initialize(NativeLibraryBundles.InitializationMode.WARN_VERBOSE);
+            NativeLibraryBundles.initialize(InitializationMode.WARN_VERBOSE);
         } catch (NativeLibraryException e) {
             throw new RuntimeException(e);
         }

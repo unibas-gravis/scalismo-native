@@ -1,5 +1,7 @@
 package scalismo.support.nativelibs.impl;
 
+import scalismo.support.nativelibs.NativeLibraryException;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

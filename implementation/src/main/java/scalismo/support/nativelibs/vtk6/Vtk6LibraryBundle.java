@@ -1,7 +1,7 @@
 package scalismo.support.nativelibs.vtk6;
 
 import scalismo.support.nativelibs.impl.NativeLibraryBundle;
-import scalismo.support.nativelibs.impl.NativeLibraryException;
+import scalismo.support.nativelibs.NativeLibraryException;
 import scalismo.support.nativelibs.impl.Platform;
 import vtk.vtkNativeLibrary;
 import vtk.vtkPanel;

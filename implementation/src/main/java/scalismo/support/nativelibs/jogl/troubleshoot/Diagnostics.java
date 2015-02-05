@@ -1,6 +1,8 @@
 package scalismo.support.nativelibs.jogl.troubleshoot;
 
+import scalismo.support.nativelibs.InitializationMode;
 import scalismo.support.nativelibs.NativeLibraryBundles;
+import scalismo.support.nativelibs.NativeLibraryBundlesImplementation;
 
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
@@ -9,7 +11,7 @@ public class Diagnostics {
 
     public static void main(String[] args) throws Exception {
         System.setProperty("jogl.verbose", "true");
-        NativeLibraryBundles.initialize(NativeLibraryBundles.InitializationMode.THROW_EXCEPTION_ON_FAIL);
+        NativeLibraryBundles.initialize(InitializationMode.THROW_EXCEPTION_ON_FAIL);
 
         try {
             GLProfile profile = GLProfile.getDefault();
