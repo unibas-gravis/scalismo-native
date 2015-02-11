@@ -6,13 +6,13 @@ organization in ThisBuild := productPackage.mkString(".")
 
 version in ThisBuild := productVersion
 
-scalaVersion in ThisBuild := s"$scalaMinorVersion.$scalaReleaseVersion"
-
 javacOptions in ThisBuild ++= Seq("-source", "1.6", "-target", "1.6")
 
 scalacOptions in ThisBuild ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.6")
 
 publishTo in ThisBuild := Some(Resolver.file("file",  new File( publishPrefix )) )
+
+crossPaths in ThisBuild := false
 
 
 
