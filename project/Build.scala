@@ -3,11 +3,8 @@ import sbt._
 
 object Build extends sbt.Build {
 
-  lazy val productVersion = "2.0.0"
+  lazy val productVersion = "2.0.1"
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")
-
-  lazy val scalaMinorVersion = "2.10"
-  lazy val scalaReleaseVersion = "4"
 
   lazy val publishPrefix = "/export/contrib/statismo/repo/public"
   lazy val publishLocalPrefix = s"${System.getProperty("user.home")}/.ivy2/local"

@@ -7,22 +7,22 @@ publishArtifact in(Compile, packageDoc) := false
 
 publishFixup <<= (baseDirectory, unmanagedBase in Compile, name) map { (base, lib, productName) =>
   val topDir = s"$publishPrefix/${productPackage.mkString("/")}"
-  val dir = s"$topDir/${productName}_$scalaMinorVersion"
+  val dir = s"$topDir/${productName}"
   """ant -file %s/fixup.xml -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s -Dproductname=%s""".format(
     base,
-    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion.jar",
-    s"$dir/$productVersion/${productName}_$scalaMinorVersion-$productVersion-sources.jar",
+    s"$dir/$productVersion/${productName}-$productVersion.jar",
+    s"$dir/$productVersion/${productName}-$productVersion-sources.jar",
     lib,
     productName
   ).!
 }
 
 publishLocalFixup <<= (baseDirectory, unmanagedBase in Compile, name) map { (base, lib, productName) =>
-  val dir = s"$publishLocalPrefix/${productPackage.mkString(".")}/${productName}_$scalaMinorVersion/$productVersion"
+  val dir = s"$publishLocalPrefix/${productPackage.mkString(".")}/${productName}/$productVersion"
   """ant -file %s/fixup.xml -Djarfile=%s -Dsrcfile=%s -Dlibdir=%s -Dproductname=%s""".format(
     base,
-    s"$dir/jars/${productName}_$scalaMinorVersion.jar",
-    s"$dir/srcs/${productName}_$scalaMinorVersion-sources.jar",
+    s"$dir/jars/${productName}.jar",
+    s"$dir/srcs/${productName}-sources.jar",
     lib,
     productName
   ).!
