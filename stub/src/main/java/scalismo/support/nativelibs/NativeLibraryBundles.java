@@ -75,12 +75,12 @@ public class NativeLibraryBundles {
         String v = MAJOR_VERSION + "." + MINOR_VERSION + ".";
         s.append("\n\nIf you are using sbt to manage dependencies,\n");
         s.append("put a line similar to:\n\n");
-        s.append("    libraryDependencies += \"ch.unibas.cs.gravis\" %% \"scalismo-native-all\" % \"" + v + "+\"\n\n");
+        s.append("    libraryDependencies += \"ch.unibas.cs.gravis\" % \"scalismo-native-all\" % \"" + v + "+\"\n\n");
         s.append("in your build.sbt or Build.scala file.\n");
         s.append("For general help about managing sbt dependencies, please\n");
         s.append("see the sbt documentation.\n\n");
         s.append("If you are not using sbt, download and add this file to your classpath:\n\n");
-        s.append("    https://statismo.cs.unibas.ch/repository/public/ch/unibas/cs/gravis/scalismo-native-all_2.10/" + v + "0/scalismo-native-all_2.10-" + v + "0.jar\n\n");
+        s.append("    http://statismo.cs.unibas.ch/repository/public/ch/unibas/cs/gravis/scalismo-native-all/" + v + "0/scalismo-native-all-" + v + "0.jar\n\n");
         s.append("Note that the actual location or file name might be slightly different, but you'll figure it out no doubt. ;-)\n");
 
         s.append("Reminder: this version of scalismo-native-stub will accept any implementation with a version that is\n");
