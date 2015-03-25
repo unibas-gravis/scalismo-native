@@ -48,17 +48,26 @@ public class Jogl implements GLEventListener {
         int x = 0, y = 0;
         for (Map.Entry<String, GLProfile> entry : profiles.entrySet()) {
             GLProfile profile = entry.getValue();
+            boolean showing = false;
             if (profile.isGL3()) {
                 new GL3Sample(entry.getKey(), profile, x, y, FRAME_WIDTH, FRAME_HEIGHT);
-            } else {
+                showing = true;
+                System.out.println(entry.getKey()+ ": GL3");
+            } else if (profile.isGL2()) {
                 new Jogl(entry.getKey(), profile, x, y);
+                showing = true;
+                System.out.println(entry.getKey()+ ": GL2");
+            } else {
+                System.out.println(entry.getKey()+ ": neither GL2 nor GL3");
             }
-            x += (FRAME_WIDTH + FRAME_PADDING);
-            if (x + FRAME_WIDTH > screenSize.width) {
-                x = 0;
-                y += FRAME_PADDING;
-                if (y + FRAME_HEIGHT <= screenSize.height) {
-                    y += FRAME_HEIGHT;
+            if (showing) {
+                x += (FRAME_WIDTH + FRAME_PADDING);
+                if (x + FRAME_WIDTH > screenSize.width) {
+                    x = 0;
+                    y += FRAME_PADDING;
+                    if (y + FRAME_HEIGHT <= screenSize.height) {
+                        y += FRAME_HEIGHT;
+                    }
                 }
             }
         }
