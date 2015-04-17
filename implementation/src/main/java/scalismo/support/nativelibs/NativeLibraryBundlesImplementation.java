@@ -12,7 +12,7 @@ import java.util.*;
 public class NativeLibraryBundlesImplementation {
 
     public static final int MAJOR_VERSION = 2;
-    public static final int MINOR_VERSION = 0;
+    public static final int MINOR_VERSION = 1;
 
     private static final Map<String, NativeLibraryBundle> _BUNDLES = setupBundles();
 
@@ -51,6 +51,18 @@ public class NativeLibraryBundlesImplementation {
                                               String... bundleIds) throws NativeLibraryException {
 
         synchronized (NativeLibraryBundlesImplementation.class) {
+            // very first thing: set some libraries to "known-good" (albeit slightly slower) implementations, unless explicitly overridden by the user
+
+            if (System.getProperty("com.github.fommil.netlib.BLAS") == null) {
+                System.setProperty("com.github.fommil.netlib.BLAS", "com.github.fommil.netlib.F2jBLAS");
+            }
+            if (System.getProperty("com.github.fommil.netlib.LAPACK") == null) {
+                System.setProperty("com.github.fommil.netlib.LAPACK", "com.github.fommil.netlib.F2jLAPACK");
+            }
+            if (System.getProperty("com.github.fommil.netlib.ARPACK") == null) {
+                System.setProperty("com.github.fommil.netlib.ARPACK", "com.github.fommil.netlib.F2jARPACK");
+            }
+
             Collection<String> bundles = Arrays.asList(bundleIds);
             boolean autoMode = false;
             if (bundles.isEmpty()) {
