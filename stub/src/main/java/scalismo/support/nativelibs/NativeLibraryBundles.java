@@ -14,7 +14,7 @@ public class NativeLibraryBundles {
      * but neither version 2.2 nor 1.x or 3.x would be accepted.
      */
     public static final int MAJOR_VERSION = 2;
-    public static final int MINOR_VERSION = 0;
+    public static final int MINOR_VERSION = 1;
 
     private static final String IMPLEMENTATION_CLASS_NAME = NativeLibraryBundles.class.getPackage().getName() + ".NativeLibraryBundlesImplementation";
     private static final String IMPLEMENTATION_MAJOR_VERSION_FIELDNAME = "MAJOR_VERSION";
