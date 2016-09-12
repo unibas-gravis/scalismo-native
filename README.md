@@ -12,15 +12,15 @@ ATTENTION: This project will probably only build (or rather: publish) properly o
 
 These native libraries used and their corresponding licenses are:
 
-* [JHDF5](https://www.hdfgroup.org/products/java/hdf-object/), a Java interface to HDF5 objects, licensed under the following [custom license](https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0/src/unpacked/COPYING)
+* [JHDF5 v1.8.10](https://www.hdfgroup.org/products/java/hdf-object/), a Java interface to HDF5 objects, licensed under the following [custom license](https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0/src/unpacked/COPYING)
 
-* [JOGL](http://jogamp.org/jogl/www/), Java Binding for the OpenGL API, licensed under the  [New BSD 2-Clause License](https://jogamp.org/git/?p=jogl.git;a=blob;f=LICENSE.txt)
+* [JOGL v2.2.4](http://jogamp.org/jogl/www/), Java Binding for the OpenGL API, licensed under the  [New BSD 2-Clause License](https://jogamp.org/git/?p=jogl.git;a=blob;f=LICENSE.txt)
 
-* [GlueGen](https://jogamp.org/gluegen/www/), JNI binding code generator, licensed under the  [New BSD 2-Clause License](https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt)
+* [GlueGen v2.2.4](https://jogamp.org/gluegen/www/), JNI binding code generator, licensed under the  [New BSD 2-Clause License](https://jogamp.org/git/?p=gluegen.git;a=blob_plain;f=LICENSE.txt)
 
-* [niftijio](https://github.com/cabeen/niftijio), A Java library for reading and writing NIfTI volumes, licensed under the [MIT license](https://github.com/cabeen/niftijio/blob/master/license.txt)
+* [niftijio v1.1](https://github.com/cabeen/niftijio), A Java library for reading and writing NIfTI volumes, licensed under the [MIT license](https://github.com/cabeen/niftijio/blob/master/license.txt)
 
-* [The Visualization Toolkit (VTK) version 6](http://www.vtk.org/), licensed under the [BSD license](http://www.vtk.org/licensing/)
+* [The Visualization Toolkit (VTK) v6.1.0](http://www.vtk.org/), licensed under the [BSD license](http://www.vtk.org/licensing/)
 
 
 
