@@ -24,35 +24,71 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.DigestInputStream;
+import java.util.Arrays;
+
+import static scalismo.support.nativelibs.NativeLibraryBundles.MAJOR_VERSION;
+import static scalismo.support.nativelibs.NativeLibraryBundles.MINOR_VERSION;
 
 public class Util {
-	private Util() {}
-	
-	public static File createTemporaryDirectory(String prefix, File parent) throws NativeLibraryException {
+	private Util() {
+	}
+
+	public static File createScalismoNativeDirectory(String prefix, File parent) throws NativeLibraryException {
+
+		String Name = ".scalismo";
+		File scalismoDir = new File(System.getProperty("user.home")  +File.separator + Name
+				+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 		Throwable error = null;
-		int tries = 5;
-
-		for (int i = 0; i < tries; ++i) {
-			try {
-				File dir = File.createTempFile(prefix + "-", null, parent);
-				if (!dir.exists() || dir.delete()) {
-					if (dir.mkdir()) {
-						return dir;
-					}
-				}
-			} catch (Throwable t) {
-				error = t;
+		try {
+			if (!scalismoDir.exists()) {
+				scalismoDir.mkdirs();
 			}
+		} catch (Throwable t) {
+			throw new NativeLibraryException(
+					"Unable to create directory for native libs", t);
 		}
-		throw new NativeLibraryException(
-				"Unable to create temporary directory, giving up after "
-						+ tries + " tries", error);
+		return scalismoDir;
 	}
 
 
-	public static void copyUrlToFile(URL url, File file) throws IOException {
+	public static byte[] getDigest(URL url) throws NativeLibraryException, IOException {
+		byte[] digest = null;
+
+		try {
+			BufferedInputStream is = new BufferedInputStream(url.openStream());
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			DigestInputStream dis = new DigestInputStream(is, md);
+
+			byte[] buffer = new byte[4096 * 512];
+			for (int read = is.read(buffer); read >= 0; read = is.read(buffer)) {
+				md.update(buffer, 0, read);
+			}
+			digest = md.digest();
+			is.close();
+		}
+
+	catch( java.security.NoSuchAlgorithmException e)
+	{
+		throw new NativeLibraryException("Error while computing MD5 hash for url " +url, e);
+	}
+
+	return digest;
+}
+
+	public static void copyUrlToFile(URL url, File file) throws IOException, NativeLibraryException {
+
+
 		BufferedInputStream is = new BufferedInputStream(url.openStream());
+		if (file.exists() && Arrays.equals(getDigest(url),getDigest(file.toURI().toURL()))) {
+			// nothing to do, we just return
+			return;
+		}
+
+		// otherwise we copy the file from the jar to the path.
 		BufferedOutputStream os = new BufferedOutputStream(
 				new FileOutputStream(file));
 

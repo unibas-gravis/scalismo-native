@@ -28,7 +28,7 @@ import java.util.*;
 public class NativeLibraryBundlesImplementation {
 
     public static final int MAJOR_VERSION = 3;
-    public static final int MINOR_VERSION = 0;
+    public static final int MINOR_VERSION = 1;
 
     private static final Map<String, NativeLibraryBundle> _BUNDLES = setupBundles();
 
@@ -172,9 +172,6 @@ public class NativeLibraryBundlesImplementation {
                 }
             }
 
-            if (linux) {
-                CleanupFilesShutdownHook.getInstance().run();
-            }
             return loaded;
         }
     }
@@ -182,9 +179,8 @@ public class NativeLibraryBundlesImplementation {
     private static synchronized void setupBaseDirectoryIfNeeded()
             throws NativeLibraryException {
         if (baseDirectory == null) {
-            baseDirectory = Util.createTemporaryDirectory("scalismo_native",
+            baseDirectory = Util.createScalismoNativeDirectory("scalismo_native",
                     null);
-            CleanupFilesShutdownHook.getInstance().deleteOnExit(baseDirectory);
         }
     }
 
