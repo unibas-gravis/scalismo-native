@@ -28,18 +28,19 @@ import java.security.MessageDigest;
 import java.security.DigestInputStream;
 import java.util.Arrays;
 
+import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Name;
 import static scalismo.support.nativelibs.NativeLibraryBundles.MAJOR_VERSION;
 import static scalismo.support.nativelibs.NativeLibraryBundles.MINOR_VERSION;
 
 public class Util {
 	private Util() {
 	}
+	public static File scalismoDir = new File(System.getProperty("user.home")  +File.separator + Name
+			+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 	public static File createScalismoNativeDirectory(String prefix, File parent) throws NativeLibraryException {
 
 		String Name = ".scalismo";
-		File scalismoDir = new File(System.getProperty("user.home")  +File.separator + Name
-				+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 		Throwable error = null;
 		try {
