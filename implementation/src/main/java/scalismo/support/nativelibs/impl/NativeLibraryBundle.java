@@ -182,7 +182,7 @@ public abstract class NativeLibraryBundle {
 
 		try {
 			onInitializeStart();
-            File target = Util.createTemporaryDirectory(getId(), baseDir);
+            File target = Util.createScalismoNativeDirectory(getId(), baseDir);
             NativeLibraryDirectory source = NativeLibraryDirectory.instantiate(
                     this, Platform.getPlatform());
 

@@ -19,7 +19,7 @@ import sbt._
 
 object Build extends sbt.Build {
 
-  lazy val productVersion = "3.0.0"
+  lazy val productVersion = "3.1.0"
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")
 
   lazy val publishPrefix = "/export/contrib/statismo/repo/public"
