@@ -31,7 +31,7 @@ public class Util {
 	private Util() {
 	}
 
-	public static File scalismoDir = new File(System.getProperty("user.home")  +File.separator + ".scalismo"
+	public static File scalismoNativeDir = new File(System.getProperty("user.home")  +File.separator + ".scalismo"
 			+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 	public static File createScalismoNativeDirectory(String prefix, File parent) throws NativeLibraryException {
@@ -39,14 +39,14 @@ public class Util {
 
 		Throwable error = null;
 		try {
-			if (!scalismoDir.exists()) {
-				scalismoDir.mkdirs();
+			if (!scalismoNativeDir.exists()) {
+				scalismoNativeDir.mkdirs();
 			}
 		} catch (Throwable t) {
 			throw new NativeLibraryException(
 					"Unable to create directory for native libs", t);
 		}
-		return scalismoDir;
+		return scalismoNativeDir;
 	}
 
 
