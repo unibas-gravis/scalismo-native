@@ -18,14 +18,10 @@ package scalismo.support.nativelibs.impl;
 
 import scalismo.support.nativelibs.NativeLibraryException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 import static scalismo.support.nativelibs.NativeLibraryBundles.MAJOR_VERSION;
@@ -35,22 +31,22 @@ public class Util {
 	private Util() {
 	}
 
+	public static File scalismoNativeDir = new File(System.getProperty("user.home")  +File.separator + ".scalismo"
+			+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
+
 	public static File createScalismoNativeDirectory(String prefix, File parent) throws NativeLibraryException {
 
-		String Name = ".scalismo";
-		File scalismoDir = new File(System.getProperty("user.home")  +File.separator + Name
-				+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 		Throwable error = null;
 		try {
-			if (!scalismoDir.exists()) {
-				scalismoDir.mkdirs();
+			if (!scalismoNativeDir.exists()) {
+				scalismoNativeDir.mkdirs();
 			}
 		} catch (Throwable t) {
 			throw new NativeLibraryException(
 					"Unable to create directory for native libs", t);
 		}
-		return scalismoDir;
+		return scalismoNativeDir;
 	}
 
 
