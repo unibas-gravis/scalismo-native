@@ -18,29 +18,24 @@ package scalismo.support.nativelibs.impl;
 
 import scalismo.support.nativelibs.NativeLibraryException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
-import static com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken.Name;
 import static scalismo.support.nativelibs.NativeLibraryBundles.MAJOR_VERSION;
 import static scalismo.support.nativelibs.NativeLibraryBundles.MINOR_VERSION;
 
 public class Util {
 	private Util() {
 	}
-	public static File scalismoDir = new File(System.getProperty("user.home")  +File.separator + Name
+
+	public static File scalismoDir = new File(System.getProperty("user.home")  +File.separator + ".scalismo"
 			+ File.separator + "native-libs-" + MAJOR_VERSION + "." + MINOR_VERSION);
 
 	public static File createScalismoNativeDirectory(String prefix, File parent) throws NativeLibraryException {
 
-		String Name = ".scalismo";
 
 		Throwable error = null;
 		try {
