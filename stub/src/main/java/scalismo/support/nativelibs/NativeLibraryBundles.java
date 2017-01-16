@@ -24,14 +24,17 @@ import java.lang.reflect.Method;
 public class NativeLibraryBundles {
 
     /**
+     * VERSION INFORMATION
+     * ===================
+     *
      * Since we're using semantic versioning, any implementation
      * with a different major version is considered incompatible, whereas
      * a higher minor version is downward-compatible. In other words:
      * A stub version 2.3 will accept an implementation with version 2.5,
      * but neither version 2.2 nor 1.x or 3.x would be accepted.
      */
-    public static final int MAJOR_VERSION = 3;
-    public static final int MINOR_VERSION = 1;
+    public static final int MAJOR_VERSION = 4;
+    public static final int MINOR_VERSION = 0;
 
     private static final String IMPLEMENTATION_CLASS_NAME = NativeLibraryBundles.class.getPackage().getName() + ".NativeLibraryBundlesImplementation";
     private static final String IMPLEMENTATION_MAJOR_VERSION_FIELDNAME = "MAJOR_VERSION";

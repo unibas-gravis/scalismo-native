@@ -27,8 +27,12 @@ import java.util.*;
 
 public class NativeLibraryBundlesImplementation {
 
-    public static final int MAJOR_VERSION = 3;
-    public static final int MINOR_VERSION = 1;
+    /**
+     * VERSION INFORMATION
+     * ===================
+     */
+    public static final int MAJOR_VERSION = 4;
+    public static final int MINOR_VERSION = 0;
 
     private static final Map<String, NativeLibraryBundle> _BUNDLES = setupBundles();
 

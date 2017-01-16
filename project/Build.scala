@@ -19,7 +19,32 @@ import sbt._
 
 object Build extends sbt.Build {
 
-  lazy val productVersion = "3.1.1"
+  // IMPORTANT:
+  // ==========
+  //
+  // ( version terminology: MAJOR.MINOR.PATCH, thus 1.5.2 == MAJOR=1, MINOR=5, PATCH=2 )
+  // ( dependencies: the STUB *requires* an IMPLEMENTATION with the *same* MAJOR version, and an *equal or higher* MINOR version)
+  //
+  // - If ANY part of the PUBLICLY available classes/methods/fields in EITHER the stub or the implementation of THIS project changes in a breaking way, bump the MAJOR version.
+  // - If ANY part of the PUBLIC interface of the BUNDLED files (VTK, jhfd5, ...) changes in a breaking way, bump the MAJOR version.
+  // - If ANY part of either THIS project or a BUNDLED file changes in a non-breaking (backwards-compatible) way, bump the MINOR version.
+  // - It's probably best/easiest to not use PATCH versions (leave them at 0, and increment the MINOR version instead), as the internal logic doesn't consider them.
+  //
+  //
+  // EVEN MORE IMPORTANT
+  // ===================
+  //
+  // !!! This isn't the only place where version information is stored !!!
+  // ---------------------------------------------------------------------
+  //
+  // If you change the productVersion here, you MUST also change the MAJOR_VERSION and MINOR_VERSION fields in these two files accordingly:
+  //
+  // stub/src/main/java/scalismo/support/nativelibs/NativeLibraryBundles.java
+  // implementation/src/main/java/scalismo/support/nativelibs/NativeLibraryBundlesImplementation.java
+  //
+  lazy val productVersion = "4.0.0"
+
+
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")
 
   lazy val publishPrefix = "/export/contrib/statismo/repo/public"
