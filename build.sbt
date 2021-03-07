@@ -6,14 +6,28 @@ organization in ThisBuild := productPackage.mkString(".")
 
 version in ThisBuild := productVersion
 
-javacOptions in ThisBuild ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions in ThisBuild ++= Seq("-source", "1.8", "-target", "1.8")
 
-scalacOptions in ThisBuild ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.6")
+javacOptions in (ThisBuild, doc) := Seq("-source", "1.8")
+
+scalacOptions in ThisBuild ++= Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature", "-target:jvm-1.8")
 
 publishTo in ThisBuild := Some(Resolver.file("file",  new File( publishPrefix )) )
 
 crossPaths in ThisBuild := false
 
+
+homepage in ThisBuild := Some(url("https://scalismo.org"))
+licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+scmInfo in ThisBuild := Some(ScmInfo(url("https://github.com/unibas-gravis/scalismo-native"), "git@github.com:unibas-gravis/scalismo-native.git"))
+developers in ThisBuild := List(Developer("marcelluethi", "marcelluethi", "marcel.luethi@unibas.ch", url("https://github.com/marcelluethi")))
+publishMavenStyle := true
+publishTo in ThisBuild := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
 
 
 // the root project itself does not publish anything, but depends on the publish[-local] tasks.

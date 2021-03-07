@@ -16,6 +16,7 @@ publishFixup <<= (baseDirectory, name, fixupExclude) map { (base, productName, e
     productName,
     excludes
   ).!
+
 }
 
 publishLocalFixup <<= (baseDirectory, name, fixupExclude) map { (base, productName, exclude) =>
@@ -37,5 +38,5 @@ publishFixup <<= publishFixup dependsOn(publishFixup in stub, publish)
 // that's not strictly required for sbt proper, but it helps IntelliJ Idea.
 unmanagedBase := (unmanagedBase in stub).value
 
-publishArtifact in(Compile, packageDoc) := false
+publishArtifact in(Compile, packageDoc) := true
 

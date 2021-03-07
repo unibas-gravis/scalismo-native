@@ -47,7 +47,7 @@ object Build extends sbt.Build {
 
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")
 
-  lazy val publishPrefix = "/export/contrib/statismo/repo/public"
+  lazy val publishPrefix = s"${System.getProperty("java.io.tmpdir")}"
   lazy val publishLocalPrefix = s"${System.getProperty("user.home")}/.ivy2/local"
 
   // these task and settings keys are needed for the implementation project

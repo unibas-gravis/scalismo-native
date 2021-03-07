@@ -3,7 +3,7 @@
 
 name := "scalismo-native-stub"
 
-publishArtifact in(Compile, packageDoc) := false
+publishArtifact in(Compile, packageDoc) := true
 
 publishFixup <<= (baseDirectory, unmanagedBase in Compile, name) map { (base, lib, productName) =>
   val topDir = s"$publishPrefix/${productPackage.mkString("/")}"
