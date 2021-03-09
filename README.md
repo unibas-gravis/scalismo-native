@@ -29,3 +29,15 @@ All code is available to you under the Apache license, version 2, available at h
 
 Copyright, University of Basel, 2016.
 
+## Deploy to sonatype
+
+Unfortunately, we cannot directly publish to sonatype using sbt. Instead, we need to do a publish, 
+and then upload the files manually. To add insult to insjury, we currently also need to sign the files manually. 
+Do the following:
+
+* sbt publish
+* navigate to the tmp directly, and there in the subfolder where the files were published
+* sign all the files using: for f in *.jar *.pom; do gpg2   -ab  $f ; done
+* directly from this directory, create a zip file
+* upload them manually to https://oss.sonatype.org/#stagingRepositories
+

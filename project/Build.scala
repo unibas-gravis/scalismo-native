@@ -42,7 +42,7 @@ object Build extends sbt.Build {
   // stub/src/main/java/scalismo/support/nativelibs/NativeLibraryBundles.java
   // implementation/src/main/java/scalismo/support/nativelibs/NativeLibraryBundlesImplementation.java
   //
-  lazy val productVersion = "4.0.0"
+  lazy val productVersion = "4.0.1"
 
 
   lazy val productPackage = Seq("ch", "unibas", "cs", "gravis")

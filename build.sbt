@@ -22,13 +22,24 @@ licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICE
 scmInfo in ThisBuild := Some(ScmInfo(url("https://github.com/unibas-gravis/scalismo-native"), "git@github.com:unibas-gravis/scalismo-native.git"))
 developers in ThisBuild := List(Developer("marcelluethi", "marcelluethi", "marcel.luethi@unibas.ch", url("https://github.com/marcelluethi")))
 publishMavenStyle := true
-publishTo in ThisBuild := Some(
-      if (isSnapshot.value)
-        Opts.resolver.sonatypeSnapshots
-      else
-        Opts.resolver.sonatypeStaging
-    )
 
+/*
+ Eventually we want to publish to sonatype. However, as the files in the
+ build need fixup locally, we cannot directly publish. Rather we publish in
+ a tmp directory and copy the resulting release files manually onto sonatype.
+ This is justified as we don't release often.
+*/
+
+// This is what we would like to do
+//publishTo in ThisBuild := Some(
+//      if (isSnapshot.value)
+//        Opts.resolver.sonatypeSnapshots
+//      else
+//        Opts.resolver.sonatypeStaging
+//    )
+
+// This is what we do instead
+publishTo := Some(MavenCache("local-maven", new File( publishPrefix )))
 
 // the root project itself does not publish anything, but depends on the publish[-local] tasks.
 // Well, except that for the implementation, it also needs to be "fixed up".
@@ -36,9 +47,23 @@ publishTo in ThisBuild := Some(
 
 publishLocal := {}
 
-publishLocal <<= publishLocal dependsOn (publishLocalFixup in impl_all, publishLocalFixup in impl_linux64, publishLocalFixup in impl_mac64, publishLocalFixup in impl_win64, publishLocalFixup in impl_win32, publishLocalFixup in impl_win)
+publishLocal <<= publishLocal dependsOn (
+  publishLocalFixup in impl_all,
+  publishLocalFixup in impl_linux64,
+  publishLocalFixup in impl_mac64,
+  publishLocalFixup in impl_win64,
+  publishLocalFixup in impl_win32,
+  publishLocalFixup in impl_win
+)
 
 publish := {}
 
-publish <<= publish dependsOn (publishFixup in impl_all, publishFixup in impl_linux64, publishFixup in impl_mac64, publishFixup in impl_win64, publishFixup in impl_win32, publishFixup in impl_win)
+publish <<= publish dependsOn (
+  publishFixup in impl_all,
+  publishFixup in impl_linux64,
+  publishFixup in impl_mac64,
+  publishFixup in impl_win64,
+  publishFixup in impl_win32,
+  publishFixup in impl_win
+)
 
